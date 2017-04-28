@@ -4,7 +4,7 @@
 A Lightweight and clean Music Player for Android.
 
 ## What is Canine Music?
-Canine Music is a Java App made by me, @Aurailus for Android Devices, with help from @delta1512. The app aims to achieve everything that I've wanted that other music apps have omitted. The app is being built in Android Studio for API 21 (Android Lollipop) and up.
+Canine Music is a Java App made by @Aurailus for Android Devices, with help from @delta1512. The app aims to achieve everything that we've wanted that other music apps have omitted. The app is being built in Android Studio for API 21 (Android Lollipop) and up.
 
 ## What needs to be done:
 - [x] Music Playback
