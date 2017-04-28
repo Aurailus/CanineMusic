@@ -23,5 +23,5 @@ No, Canine Music will be provided free of charge.
 I don't know how Github works, Don't ask me!
 
 ## Credit where Credit is due
-- [@delta1512](https://github.com/delta1512) - Icon Design \((link)[https://github.com/delta1512/open_icon_set]\)
+- [@delta1512](https://github.com/delta1512) - Icon Design \([link](https://github.com/delta1512/open_icon_set)\)
 - [@Aurailus](https://github.com/delta1512) - Programming and Design
