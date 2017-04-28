@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Canine</string>
+    <string name="title_activity_main">Canine Music</string>
+    <string name="back">Back</string>
+
+    <string name="title_activity_player">Player</string>
+    <string name="no_time">0:00</string>
+    <string name="previous_song">Previous Song</string>
+    <string name="next_song">Next Song</string>
+    <string name="play_pause">Play / Pause</string>
+    <string name="album_art">Album</string>
+    <string name="unknown_data">&lt;unknown&gt;</string>
+    <string name="shuffle_state">Shuffle</string>
+    <string name="repeat_state">Repeat</string>
+
+    <string name="nav_id3">ID3 Tagger</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_ringtone">Ringtone</string>
+    <string name="nav_import">Import</string>
+    <string name="nav_share">Share</string>
+    <string name="extra_items">EXTRA STUFF</string>
+    <string name="nav_rate">Rate</string>
+    <string name="nav_about">About us</string>
+</resources>
