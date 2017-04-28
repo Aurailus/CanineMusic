@@ -19,3 +19,7 @@ No, Canine Music will be provided free of charge.
 
 ## How can I help?
 I don't know how Github works, Don't ask me!
+
+## Credit where Credit is due
+@Delta - Icon Design
+@Aurailus - Programming and Design
