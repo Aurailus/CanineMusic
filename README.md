@@ -1,7 +1,7 @@
 # [Canine Music Player](http://canine.woofbark.dog)
 [![Canine Music Logo](https://github.com/Aurailus/CanineMusic/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)](http://canine.woofbark.dog)
 
-A Lightweight and clean Music Player for Android.
+A clean, lightweight Music Player for Android.
 
 ## What is Canine Music?
 Canine Music is a Java App made by [@Aurailus](https://github.com/delta1512) for Android Devices, with help from [@delta1512](https://github.com/delta1512). The app aims to achieve everything that we've wanted that other music apps have omitted. The app is being built in Android Studio for API 21 (Android Lollipop) and up.
