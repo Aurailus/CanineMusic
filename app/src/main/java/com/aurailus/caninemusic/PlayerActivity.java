@@ -80,7 +80,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            System.out.println("ServiceConnection " + musicConnection);
             startService(playIntent);
         }
 
@@ -125,7 +124,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("BROADCAST RECIEVED");
             initPlayer();
         }
     };

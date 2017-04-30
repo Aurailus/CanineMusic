@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 public class SongAdapter extends BaseAdapter {
     private ArrayList<Song> songs;
-    private ArrayList<SongArt> albumart;
+    private ArrayList<Album> albumart;
     private LayoutInflater songInf;
 
     @Override
@@ -49,7 +49,7 @@ public class SongAdapter extends BaseAdapter {
         songDuration.setText(curSong.getHumanLength());
 
         for(int i = 0; i < albumart.size(); i++) {
-            SongArt curAlbum = albumart.get(i);
+            Album curAlbum = albumart.get(i);
             if (curAlbum.getId().equals(curSong.getAlbumId())) {
                 if (!curAlbum.getEmpty()) {
                     Drawable img = curAlbum.getImage();
@@ -72,14 +72,14 @@ public class SongAdapter extends BaseAdapter {
             Song curSong = songs.get(i);
             boolean exists = false;
             for(int j = 0; j < albumart.size(); j++) {
-                SongArt curAlbum = albumart.get(j);
+                Album curAlbum = albumart.get(j);
                 if (curSong.getAlbumId().equals(curAlbum.getId())) {
                     exists = true;
                     break;
                 }
             }
             if (!exists) {
-                albumart.add(new SongArt(curSong.getAlbumId(), c));
+                albumart.add(new Album(curSong.getAlbumId(), c));
             }
         }
 

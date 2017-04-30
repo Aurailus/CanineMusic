@@ -100,7 +100,6 @@ public class MusicService extends Service implements
 
         Intent intent = new Intent("musicPrepared");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        System.out.println("BROADCAST SENT");
     }
 
     public void setList(ArrayList<Song> songs) {
@@ -175,9 +174,6 @@ public class MusicService extends Service implements
     public String getAlbumId() { return songs.get(ind).getAlbumId(); }
     public boolean getShuffle() {
         return shuffle;
-    }
-    public MediaPlayer getPlayer() {
-        return player;
     }
 
     public boolean isPlaying() {

@@ -23,17 +23,12 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include"
-            android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toTopOf="@+id/navigation">
 
             <ViewFlipper
                 android:id="@+id/flipper"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:measureAllChildren="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"

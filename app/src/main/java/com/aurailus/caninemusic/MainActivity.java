@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 import android.net.Uri;
@@ -37,7 +40,10 @@ public class MainActivity extends AppCompatActivity
         implements MediaPlayerControl, NavigationView.OnNavigationItemSelectedListener  {
 
     private ArrayList<Song> songList;
+    private ArrayList<Song> playList;
+    private ArrayList<Album> albumList;
     private ListView songView;
+    private GridView albumView;
     private ViewFlipper flipper;
     private MusicService musicSrv;
     private Intent playIntent;
@@ -66,20 +72,35 @@ public class MainActivity extends AppCompatActivity
         flipper = (ViewFlipper)findViewById(R.id.flipper);
         bottomNav = (BottomNavigationView)findViewById(R.id.navigation);
         songList = new ArrayList<>();
+
         getSongs();
         Collections.sort(songList, new Comparator<Song>() {
             public int compare(Song a, Song b) {
-                return a.getTitle().compareTo(b.getTitle());
+                return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
             }
         });
+
+        playList = new ArrayList<>();
+        playList.addAll(songList);
 
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
 
+        albumView = (GridView)findViewById(R.id.album_list);
+        albumList = new ArrayList<>();
+        getAlbums();
+        Collections.sort(albumList, new Comparator<Album>() {
+            public int compare(Album a, Album b) {
+                return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
+            }
+        });
+        AlbumAdapter albumAdt = new AlbumAdapter(this, albumList);
+        albumView.setAdapter(albumAdt);
+
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                selectFragment(item);
+                selectSection(item);
                 return true;
             }
         });
@@ -88,21 +109,21 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    void selectFragment(MenuItem item) {
+    void selectSection(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_album:
+            case (R.id.nav_album):
                 flipper.setDisplayedChild(0);
                 break;
-            case R.id.nav_playlist:
+            case (R.id.nav_playlist):
                 flipper.setDisplayedChild(1);
                 break;
-            case R.id.nav_track:
+            case (R.id.nav_track):
                 flipper.setDisplayedChild(2);
                 break;
-            case R.id.nav_artist:
+            case (R.id.nav_artist):
                 flipper.setDisplayedChild(3);
                 break;
-            case R.id.nav_genre:
+            case (R.id.nav_genre):
                 flipper.setDisplayedChild(4);
                 break;
         }
@@ -115,7 +136,7 @@ public class MainActivity extends AppCompatActivity
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicBinder binder = (MusicBinder)service;
             musicSrv = binder.getService();
-            musicSrv.setList(songList);
+            musicSrv.setList(playList);
             musicBound = true;
         }
 
@@ -177,12 +198,66 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void getAlbums() {
+        ContentResolver albumResolver = getContentResolver();
+        Uri albumUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[]columns = {android.provider.MediaStore.Audio.Albums._ID, android.provider.MediaStore.Audio.Albums.ALBUM_ID,
+                android.provider.MediaStore.Audio.Albums.ALBUM, android.provider.MediaStore.Audio.Albums.ARTIST};
+
+        Cursor albumCursor = albumResolver.query(albumUri, columns, null, null, null);
+
+        if (albumCursor != null && albumCursor.moveToFirst()) {
+            int idList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums._ID);
+            int titleList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM);
+            int albumIdList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ID);
+            int artistList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ARTIST);
+
+            boolean next = true;
+            while (next) {
+                String realId = albumCursor.getString(idList);
+                String albumId = albumCursor.getString(albumIdList);
+                String thisTitle = albumCursor.getString(titleList);
+                String thisArtist = albumCursor.getString(artistList);
+
+                boolean exists = false;
+                for (Album album : albumList) {
+                    if (album.getId().equals(albumId)) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) albumList.add(new Album(albumId, thisTitle, thisArtist, this.getBaseContext()));
+                next = albumCursor.moveToNext();
+            }
+            albumCursor.close();
+        }
+    }
+
     public void chooseSong(View view) {
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
         if (playbackPaused) {
             playbackPaused = false;
         }
+        Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
+        startActivity(intent);
+    }
+
+    public void chooseAlbum(View view) {
+        if (playbackPaused) {
+            playbackPaused = false;
+        }
+
+        playList.clear();
+        System.out.println(view.getTag());
+        for(Song song : songList) {
+            if (song.getAlbumId().equals(view.getTag())) {
+                playList.add(song);
+            }
+        }
+        musicSrv.setList(playList);
+        musicSrv.setSong(0);
+        musicSrv.playSong();
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         startActivity(intent);
     }

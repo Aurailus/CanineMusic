@@ -21,4 +21,10 @@
     <string name="extra_items">EXTRA STUFF</string>
     <string name="nav_rate">Rate</string>
     <string name="nav_about">About us</string>
+
+    <string name="albums">Albums</string>
+    <string name="playlists">Playlists</string>
+    <string name="tracks">Tracks</string>
+    <string name="artists">Artists</string>
+    <string name="genres">Genres</string>
 </resources>
