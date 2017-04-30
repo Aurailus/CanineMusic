@@ -25,6 +25,7 @@ import android.widget.MediaController.MediaPlayerControl;
 import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity
 
     private ArrayList<Song> songList;
     private ListView songView;
+    private ViewFlipper flipper;
     private MusicService musicSrv;
     private Intent playIntent;
     private BottomNavigationView bottomNav;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         songView = (ListView)findViewById(R.id.song_list);
+        flipper = (ViewFlipper)findViewById(R.id.flipper);
         bottomNav = (BottomNavigationView)findViewById(R.id.navigation);
         songList = new ArrayList<>();
         getSongs();
@@ -88,19 +91,19 @@ public class MainActivity extends AppCompatActivity
     void selectFragment(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_album:
-                System.out.println("SEL ALBUMS");
+                flipper.setDisplayedChild(0);
                 break;
             case R.id.nav_playlist:
-                System.out.println("SEL PLAYLIST");
+                flipper.setDisplayedChild(1);
                 break;
             case R.id.nav_track:
-                System.out.println("SEL TRACK");
+                flipper.setDisplayedChild(2);
                 break;
             case R.id.nav_artist:
-                System.out.println("SEL ARTIST");
+                flipper.setDisplayedChild(3);
                 break;
             case R.id.nav_genre:
-                System.out.println("SEL GENRE");
+                flipper.setDisplayedChild(4);
                 break;
         }
     }

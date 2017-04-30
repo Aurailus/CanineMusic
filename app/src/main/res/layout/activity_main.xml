@@ -26,17 +26,36 @@
             android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toTopOf="@+id/navigation">
 
-            <ListView
-                android:id="@+id/song_list"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="-518dp"
-                android:clipChildren="true"
-                android:dividerHeight="1sp"
+            <ViewFlipper
+                android:id="@+id/flipper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:measureAllChildren="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <include
+                    layout="@layout/view_albums"/>
+
+                <include
+                    layout="@layout/view_playlists"/>
+
+                <include
+                    layout="@layout/view_tracks"/>
+
+                <include
+                    layout="@layout/view_artists"/>
+
+                <include
+                    layout="@layout/view_genres"/>
+
+            </ViewFlipper>
 
         </android.support.constraint.ConstraintLayout>
 
