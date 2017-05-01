@@ -12,6 +12,7 @@
     <string name="unknown_data">&lt;unknown&gt;</string>
     <string name="shuffle_state">Shuffle</string>
     <string name="repeat_state">Repeat</string>
+    <string name="overflow">Overflow</string>
 
     <string name="nav_id3">ID3 Tagger</string>
     <string name="nav_settings">Settings</string>
@@ -27,4 +28,7 @@
     <string name="tracks">Tracks</string>
     <string name="artists">Artists</string>
     <string name="genres">Genres</string>
+
+    <string name="grid_mode">Grid View</string>
+    <string name="list_mode">List View</string>
 </resources>

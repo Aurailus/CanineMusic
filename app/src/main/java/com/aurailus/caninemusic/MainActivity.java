@@ -28,7 +28,9 @@ import android.widget.MediaController.MediaPlayerControl;
 import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,27 +39,27 @@ import java.util.Comparator;
 import com.aurailus.caninemusic.MusicService.*;
 
 public class MainActivity extends AppCompatActivity
-        implements MediaPlayerControl, NavigationView.OnNavigationItemSelectedListener  {
+        implements NavigationView.OnNavigationItemSelectedListener  {
 
     private ArrayList<Song> songList;
     private ArrayList<Song> playList;
     private ArrayList<Album> albumList;
     private ListView songView;
-    private GridView albumView;
+    private GridView albumGridView;
+    private ListView albumListView;
+    private ViewSwitcher albumSwitcher;
     private ViewFlipper flipper;
     private MusicService musicSrv;
     private Intent playIntent;
     private BottomNavigationView bottomNav;
-    private boolean musicBound = false;
-    private boolean paused = false;
     private boolean playbackPaused = false;
+    private boolean albumIsGrid = true;
+    private boolean musicBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
 
-        albumView = (GridView)findViewById(R.id.album_list);
+        albumGridView = (GridView)findViewById(R.id.album_grid);
         albumList = new ArrayList<>();
         getAlbums();
         Collections.sort(albumList, new Comparator<Album>() {
@@ -94,8 +96,14 @@ public class MainActivity extends AppCompatActivity
                 return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
             }
         });
-        AlbumAdapter albumAdt = new AlbumAdapter(this, albumList);
-        albumView.setAdapter(albumAdt);
+        AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
+        albumGridView.setAdapter(albumAdt);
+
+        albumListView = (ListView)findViewById(R.id.album_list);
+        albumAdt = new AlbumAdapter(this, albumList, true);
+        albumListView.setAdapter(albumAdt);
+
+        albumSwitcher = (ViewSwitcher)findViewById(R.id.album_switcher);
 
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -164,12 +172,12 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
     public void getSongs() {
         ContentResolver musicResolver = getContentResolver();
@@ -207,14 +215,15 @@ public class MainActivity extends AppCompatActivity
         Cursor albumCursor = albumResolver.query(albumUri, columns, null, null, null);
 
         if (albumCursor != null && albumCursor.moveToFirst()) {
-            int idList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums._ID);
+            //TODO: Find out if this is needed or not
+            //int idList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums._ID);
             int titleList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM);
             int albumIdList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ID);
             int artistList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ARTIST);
 
             boolean next = true;
             while (next) {
-                String realId = albumCursor.getString(idList);
+                //String realId = albumCursor.getString(idList);
                 String albumId = albumCursor.getString(albumIdList);
                 String thisTitle = albumCursor.getString(titleList);
                 String thisArtist = albumCursor.getString(artistList);
@@ -239,8 +248,7 @@ public class MainActivity extends AppCompatActivity
         if (playbackPaused) {
             playbackPaused = false;
         }
-        Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
-        startActivity(intent);
+        openPlayer();
     }
 
     public void chooseAlbum(View view) {
@@ -256,18 +264,16 @@ public class MainActivity extends AppCompatActivity
             }
         }
         musicSrv.setList(playList);
-        musicSrv.setSong(0);
+        musicSrv.setSong((int)Math.floor(Math.random()*playList.size()));
         musicSrv.playSong();
-        Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
-        startActivity(intent);
+        openPlayer();
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_player:
-                Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
-                startActivity(intent);
+                openPlayer();
                 break;
             case R.id.action_shuffle:
                 musicSrv.setShuffle(!musicSrv.getShuffle());
@@ -282,84 +288,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    //Media Control Events
-    @Override
-    public void start() {
-        musicSrv.go();
-    }
-
-    @Override
-    public void pause() {
-        musicSrv.pausePlayer();
-        playbackPaused = true;
-    }
-
-    @Override
-    public int getDuration() {
-        if (musicSrv != null && musicBound && musicSrv.isPlaying()) {
-            return musicSrv.getLength();
-        }
-        else return 0;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        paused = true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (paused) {
-            paused = false;
-        }
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        if (musicSrv != null && musicBound && musicSrv.isPlaying()) {
-            return musicSrv.getTime();
-        }
-        else return 0;
-    }
-
-    @Override
-    public void seekTo(int pos) {
-        musicSrv.seek(pos);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return musicSrv != null && musicBound && musicSrv.isPlaying();
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
+    }*/
 
     private void playNext() {
         musicSrv.playNext();
@@ -389,8 +318,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.nav_id3):
-                Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
-                startActivity(intent);
+                //open id3 editor
                 break;
             case (R.id.nav_settings):
                 //open settings
@@ -422,5 +350,36 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void switchAlbumView(View view) {
+        if (albumIsGrid) {
+            albumListView.setSelection(0);
+            albumSwitcher.setDisplayedChild(1);
+            TextView v = (TextView)findViewById(R.id.album_view_mode);
+            v.setText(R.string.list_mode);
+            albumIsGrid = false;
+        }
+        else {
+            albumGridView.setSelection(0);
+            TextView v = (TextView)findViewById(R.id.album_view_mode);
+            v.setText(R.string.grid_mode);
+            albumSwitcher.setDisplayedChild(0);
+            albumIsGrid = true;
+        }
+    }
+
+    public void shuffleAll(View view) {
+        musicSrv.setShuffle(true);
+        playList.addAll(songList);
+        musicSrv.setList(playList);
+        musicSrv.setSong((int)Math.floor(Math.random()*songList.size()));
+        musicSrv.playSong();
+        openPlayer();
+    }
+
+    public void openPlayer() {
+        Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
+        startActivity(intent);
     }
 }

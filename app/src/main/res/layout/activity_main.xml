@@ -17,23 +17,27 @@
             android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="0dp"
             android:clipChildren="true"
-            android:scrollbarStyle="outsideInset"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include"
+            android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toTopOf="@+id/navigation">
 
             <ViewFlipper
                 android:id="@+id/flipper"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginBottom="0dp"
                 android:measureAllChildren="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginRight="8dp"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_marginLeft="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp">
 
                 <include
                     layout="@layout/view_albums"/>
@@ -72,13 +76,14 @@
             android:layout_gravity="bottom"
             android:background="?android:attr/windowBackground"
             android:clipChildren="true"
+            app:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.985"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_editor_absoluteX="0dp"
             app:layout_editor_absoluteY="0dp"
-            app:menu="@menu/navigation" />
+            app:menu="@menu/navigation"/>
 
     </android.support.constraint.ConstraintLayout>
 
@@ -89,8 +94,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/activity_main_drawer_header"
-        app:menu="@menu/activity_main_drawer">
-
-    </android.support.design.widget.NavigationView>
+        app:menu="@menu/activity_main_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

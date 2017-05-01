@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/ripple_rectangle"
-    android:clickable="true"
-    android:onClick="chooseSong"
-    android:orientation="vertical"
-    android:weightSum="1">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="fill_parent"
+                                             android:layout_height="wrap_content"
+                                             android:background="@drawable/ripple_rectangle"
+                                             android:clickable="true"
+                                             android:onClick="chooseAlbum"
+                                             android:orientation="vertical"
+                                             android:weightSum="1">
 
     <ImageView
         android:id="@+id/album_art"
@@ -27,7 +27,7 @@
         app:srcCompat="@drawable/ic_album" />
 
     <TextView
-        android:id="@+id/song_title"
+        android:id="@+id/album_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -41,17 +41,14 @@
         android:textColor="#333333"
         android:textSize="20sp"
         app:layout_constraintLeft_toRightOf="@+id/album_art"
-        app:layout_constraintRight_toLeftOf="@+id/song_duration"
+        app:layout_constraintRight_toLeftOf="@+id/album_length"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/song_artist"
-        android:layout_width="0dp"
+        android:id="@+id/album_artist"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:maxLines="1"
@@ -61,13 +58,38 @@
         android:textColor="#333333"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/album_plays"
         app:layout_constraintLeft_toRightOf="@+id/album_art"
-        app:layout_constraintRight_toLeftOf="@+id/song_duration"
-        app:layout_constraintTop_toBottomOf="@+id/song_title"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/album_title"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
 
     <TextView
-        android:id="@+id/song_duration"
+        android:id="@+id/album_plays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="0dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:minLines="1"
+        android:scrollHorizontally="true"
+        android:text="@string/unknown_data"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/album_artist"
+        app:layout_constraintRight_toLeftOf="@+id/album_length"
+        app:layout_constraintTop_toBottomOf="@+id/album_title"
+        app:layout_constraintVertical_bias="0.0"/>
+
+    <TextView
+        android:id="@+id/album_length"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
