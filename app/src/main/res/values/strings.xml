@@ -3,6 +3,7 @@
     <string name="title_activity_main">Canine Music</string>
     <string name="back">Back</string>
 
+    <string name="playing">Currently Playing</string>
     <string name="title_activity_player">Player</string>
     <string name="no_time">0:00</string>
     <string name="previous_song">Previous Song</string>
@@ -31,4 +32,5 @@
 
     <string name="grid_mode">Grid View</string>
     <string name="list_mode">List View</string>
+
 </resources>

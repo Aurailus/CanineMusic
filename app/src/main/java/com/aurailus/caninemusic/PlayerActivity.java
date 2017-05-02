@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Locale;
 
 public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
@@ -152,8 +153,12 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         if (albumCursor.moveToFirst()) {
             String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
 
-            albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
-            albumView.setImageBitmap(albumArt);
+            File file = new File(albumString);
+
+            if (file.exists()) {
+                albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
+                albumView.setImageBitmap(albumArt);
+            }
         }
     }
     private void updatePlayer() {

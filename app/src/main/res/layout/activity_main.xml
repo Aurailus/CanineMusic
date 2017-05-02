@@ -14,60 +14,39 @@
         android:clipChildren="false">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="0dp"
-            android:clipChildren="true"
+            app:layout_constraintBottom_toTopOf="@+id/navigation"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="0dp"
             app:layout_constraintTop_toBottomOf="@+id/include"
-            android:layout_marginBottom="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/navigation">
+            android:clipChildren="true">
 
             <ViewFlipper
                 android:id="@+id/flipper"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginBottom="0dp"
-                android:measureAllChildren="false"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginRight="8dp"
-                app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginLeft="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="8dp">
+                app:layout_constraintVertical_bias="0.49">
 
-                <include
-                    layout="@layout/view_albums"/>
+                <include layout="@layout/view_albums"/>
 
-                <include
-                    layout="@layout/view_playlists"/>
+                <include layout="@layout/view_playlists"/>
 
-                <include
-                    layout="@layout/view_tracks"/>
+                <include layout="@layout/view_tracks"/>
 
-                <include
-                    layout="@layout/view_artists"/>
+                <include layout="@layout/view_artists"/>
 
-                <include
-                    layout="@layout/view_genres"/>
+                <include layout="@layout/view_genres"/>
 
             </ViewFlipper>
 
         </android.support.constraint.ConstraintLayout>
-
-        <include
-            android:id="@+id/include"
-            layout="@layout/main_toolbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:clipChildren="false"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/navigation"
@@ -84,6 +63,16 @@
             app:layout_editor_absoluteX="0dp"
             app:layout_editor_absoluteY="0dp"
             app:menu="@menu/navigation"/>
+
+        <include
+            layout="@layout/main_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/include"/>
 
     </android.support.constraint.ConstraintLayout>
 

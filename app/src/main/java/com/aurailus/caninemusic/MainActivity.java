@@ -10,19 +10,23 @@ import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 import android.net.Uri;
@@ -172,13 +176,6 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }*/
-
     public void getSongs() {
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -269,27 +266,6 @@ public class MainActivity extends AppCompatActivity
         openPlayer();
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_player:
-                openPlayer();
-                break;
-            case R.id.action_shuffle:
-                musicSrv.setShuffle(!musicSrv.getShuffle());
-                break;
-            case R.id.action_jumble:
-                break;
-            case R.id.action_close:
-            default:
-                stopService(playIntent);
-                musicSrv = null;
-                System.exit(0);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
-
     private void playNext() {
         musicSrv.playNext();
         if (playbackPaused) {
@@ -369,6 +345,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void openDrawer(View view) {
+        DrawerLayout nav = (DrawerLayout)findViewById(R.id.drawer_layout);
+        nav.openDrawer(Gravity.LEFT);
+    }
+
     public void shuffleAll(View view) {
         musicSrv.setShuffle(true);
         playList.addAll(songList);
@@ -379,6 +360,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void openPlayer() {
+        Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
+        startActivity(intent);
+    }
+    public void openPlayer(View view) {
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         startActivity(intent);
     }
