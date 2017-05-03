@@ -15,11 +15,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="6dp"
         app:srcCompat="@drawable/logo_hires"
         android:antialias="true"
         android:contentDescription="@string/title_activity_main"/>
@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
+        android:layout_gravity="center"
         android:text="@string/title_activity_main"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 

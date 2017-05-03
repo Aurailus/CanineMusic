@@ -23,6 +23,8 @@
     <string name="extra_items">EXTRA STUFF</string>
     <string name="nav_rate">Rate</string>
     <string name="nav_about">About us</string>
+    <string name="pinned_items">PINNED ITEMS</string>
+    <string name="add_pin">Add Item</string>
 
     <string name="albums">Albums</string>
     <string name="playlists">Playlists</string>

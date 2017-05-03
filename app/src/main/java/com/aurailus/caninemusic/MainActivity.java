@@ -1,34 +1,28 @@
 package com.aurailus.caninemusic;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.MediaController.MediaPlayerControl;
 import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -119,6 +113,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("musicPrepared"));
     }
 
     void selectSection(MenuItem item) {
@@ -140,6 +137,17 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TextView mainTitle = (TextView)findViewById(R.id.current_title);
+            TextView mainArtist = (TextView)findViewById(R.id.current_artist);
+
+            mainTitle.setText(musicSrv.getTitle());
+            mainArtist.setText(musicSrv.getArtist());
+        }
+    };
 
     //Set the musicBound variable
     private ServiceConnection musicConnection = new ServiceConnection() {
@@ -173,6 +181,7 @@ public class MainActivity extends AppCompatActivity
         //finish();
         //stopService(playIntent);
         //musicSrv = null;
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
 

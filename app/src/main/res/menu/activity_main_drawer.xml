@@ -14,12 +14,21 @@
         android:title="@string/nav_ringtone" />
 
     <item android:id="@+id/nav_import"
-        android:icon="@drawable/ic_menu_import"
+        android:icon="@drawable/ic_arrow_right"
         android:title="@string/nav_import" />
 
     <item android:id="@+id/nav_share"
         android:icon="@drawable/ic_menu_share"
         android:title="@string/nav_share" />
+
+    <item android:title="@string/pinned_items">
+        <menu>
+            <item
+                android:id="@+id/add_pin"
+                android:icon="@drawable/ic_add_circle"
+                android:title="@string/add_pin" />
+        </menu>
+    </item>
 
     <item android:title="@string/extra_items">
         <menu>
