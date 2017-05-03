@@ -21,8 +21,9 @@
         android:icon="@drawable/ic_menu_share"
         android:title="@string/nav_share" />
 
-    <item android:title="@string/pinned_items">
-        <menu>
+    <item android:title="@string/pinned_items"
+          android:id="@+id/pinned_items">
+        <menu android:id="@+id/pinned_group">
             <item
                 android:id="@+id/add_pin"
                 android:icon="@drawable/ic_add_circle"
@@ -33,12 +34,12 @@
     <item android:title="@string/extra_items">
         <menu>
             <item android:id="@+id/nav_rate"
-                android:icon="@drawable/ic_menu_rate"
-                android:title="@string/nav_rate" />
+                  android:icon="@drawable/ic_menu_rate"
+                  android:title="@string/nav_rate" />
 
             <item android:id="@+id/nav_about"
-                android:icon="@drawable/ic_artist"
-                android:title="@string/nav_about" />
+                  android:icon="@drawable/ic_artist"
+                  android:title="@string/nav_about" />
         </menu>
     </item>
 </menu>

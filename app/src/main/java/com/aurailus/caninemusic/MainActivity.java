@@ -36,8 +36,7 @@ import java.util.Comparator;
 
 import com.aurailus.caninemusic.MusicService.*;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
     private ArrayList<Song> songList;
     private ArrayList<Song> playList;
@@ -46,19 +45,20 @@ public class MainActivity extends AppCompatActivity
     private GridView albumGridView;
     private ListView albumListView;
     private ViewSwitcher albumSwitcher;
-    private ViewFlipper flipper;
     private MusicService musicSrv;
     private Intent playIntent;
-    private BottomNavigationView bottomNav;
     private boolean playbackPaused = false;
     private boolean albumIsGrid = true;
     private boolean musicBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //Basic stuffs
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Request Permission at Runtime because Android Sucks
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -68,25 +68,22 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        songView = (ListView)findViewById(R.id.song_list);
-        flipper = (ViewFlipper)findViewById(R.id.flipper);
-        bottomNav = (BottomNavigationView)findViewById(R.id.navigation);
+        //Initialize Songs
         songList = new ArrayList<>();
-
+        playList = new ArrayList<>();
         getSongs();
         Collections.sort(songList, new Comparator<Song>() {
             public int compare(Song a, Song b) {
                 return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
             }
         });
-
-        playList = new ArrayList<>();
         playList.addAll(songList);
 
+        songView = (ListView)findViewById(R.id.song_list);
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
 
-        albumGridView = (GridView)findViewById(R.id.album_grid);
+        //Initialize Albums
         albumList = new ArrayList<>();
         getAlbums();
         Collections.sort(albumList, new Comparator<Album>() {
@@ -94,6 +91,8 @@ public class MainActivity extends AppCompatActivity
                 return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
             }
         });
+
+        albumGridView = (GridView)findViewById(R.id.album_grid);
         AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
         albumGridView.setAdapter(albumAdt);
 
@@ -103,6 +102,11 @@ public class MainActivity extends AppCompatActivity
 
         albumSwitcher = (ViewSwitcher)findViewById(R.id.album_switcher);
 
+        //Navigation
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        BottomNavigationView bottomNav = (BottomNavigationView) findViewById(R.id.navigation);
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -111,14 +115,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("musicPrepared"));
+        //Receive Broadcasts for Toolbar Song Details
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("musicPrepared"));
     }
 
     void selectSection(MenuItem item) {
+        ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper);
         switch (item.getItemId()) {
             case (R.id.nav_album):
                 flipper.setDisplayedChild(0);
@@ -221,15 +223,12 @@ public class MainActivity extends AppCompatActivity
         Cursor albumCursor = albumResolver.query(albumUri, columns, null, null, null);
 
         if (albumCursor != null && albumCursor.moveToFirst()) {
-            //TODO: Find out if this is needed or not
-            //int idList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums._ID);
             int titleList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM);
             int albumIdList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ID);
             int artistList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ARTIST);
 
             boolean next = true;
             while (next) {
-                //String realId = albumCursor.getString(idList);
                 String albumId = albumCursor.getString(albumIdList);
                 String thisTitle = albumCursor.getString(titleList);
                 String thisArtist = albumCursor.getString(artistList);
@@ -275,20 +274,6 @@ public class MainActivity extends AppCompatActivity
         openPlayer();
     }
 
-    private void playNext() {
-        musicSrv.playNext();
-        if (playbackPaused) {
-            playbackPaused = false;
-        }
-    }
-
-    private void playPrev() {
-        musicSrv.playPrev();
-        if (playbackPaused) {
-            playbackPaused = false;
-        }
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -300,22 +285,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
-            case (R.id.nav_id3):
-                //open id3 editor
-                break;
-            case (R.id.nav_settings):
-                //open settings
-                break;
-            case (R.id.nav_ringtone):
-                //open ringtone editor
-                break;
-            case (R.id.nav_import):
-                //import files
-                break;
-            case (R.id.nav_share):
-                //send files
+            case (R.id.add_pin):
+                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                MenuItem it = navigationView.getMenu().findItem(R.id.pinned_items);
+                it.getSubMenu().add(0, 0, 0, "C418").setIcon(R.drawable.ic_jumble);
                 break;
             case (R.id.nav_rate):
                 String appPck = getPackageName();
@@ -356,7 +331,7 @@ public class MainActivity extends AppCompatActivity
 
     public void openDrawer(View view) {
         DrawerLayout nav = (DrawerLayout)findViewById(R.id.drawer_layout);
-        nav.openDrawer(Gravity.LEFT);
+        nav.openDrawer(Gravity.START);
     }
 
     public void shuffleAll(View view) {
