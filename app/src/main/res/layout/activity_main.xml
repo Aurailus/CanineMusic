@@ -22,7 +22,8 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="0dp"
             app:layout_constraintTop_toBottomOf="@+id/include"
-            android:clipChildren="true">
+            android:clipChildren="true"
+            android:id="@+id/constraintLayout">
 
             <ViewFlipper
                 android:id="@+id/flipper"
@@ -62,7 +63,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_editor_absoluteX="0dp"
             app:layout_editor_absoluteY="0dp"
-            app:menu="@menu/navigation"/>
+            app:menu="@menu/navigation">
+
+        </android.support.design.widget.BottomNavigationView>
 
         <include
             layout="@layout/main_toolbar"
@@ -73,6 +76,20 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/include"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:clickable="true"
+            app:elevation="4dp"
+            app:fabSize="normal"
+            android:onClick="shuffleAll"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@drawable/ic_shuffle_white"/>
 
     </android.support.constraint.ConstraintLayout>
 
