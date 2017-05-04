@@ -34,7 +34,7 @@ public class SongAdapter extends BaseAdapter {
     @Override
     public View getView(int ind, View convertView, ViewGroup parent) {
 
-        ConstraintLayout songLay =(ConstraintLayout)songInf.inflate(R.layout.song, parent, false);
+        ConstraintLayout songLay = (ConstraintLayout)songInf.inflate(R.layout.song, parent, false);
         TextView songView = (TextView)songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
         ImageView albumArtView = (ImageView)songLay.findViewById(R.id.album_art);
@@ -45,8 +45,7 @@ public class SongAdapter extends BaseAdapter {
         artistView.setText(curSong.getArtist());
         songDuration.setText(curSong.getHumanLength());
 
-        for(int i = 0; i < albumart.size(); i++) {
-            Album curAlbum = albumart.get(i);
+        for(Album curAlbum : albumart) {
             if (curAlbum.getId().equals(curSong.getAlbumId())) {
                 if (!curAlbum.getEmpty()) {
                     Drawable img = curAlbum.getImage();

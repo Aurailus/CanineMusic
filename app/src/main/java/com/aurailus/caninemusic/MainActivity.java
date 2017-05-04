@@ -8,12 +8,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +29,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.net.Uri;
 import android.content.ContentResolver;
@@ -30,6 +38,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Song> songList;
     private ArrayList<Song> playList;
     private ArrayList<Album> albumList;
-    private ListView songView;
     private GridView albumGridView;
     private ListView albumListView;
     private ViewSwitcher albumSwitcher;
@@ -79,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         playList.addAll(songList);
 
-        songView = (ListView)findViewById(R.id.song_list);
+        ListView songView = (ListView)findViewById(R.id.song_list);
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
 
@@ -143,11 +151,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            TextView appTitle = (TextView)findViewById(R.id.app_title);
+            ConstraintLayout songDetails = (ConstraintLayout)findViewById(R.id.playing_details);
+
+            appTitle.setVisibility(View.INVISIBLE);
+            songDetails.setVisibility(View.VISIBLE);
+
             TextView mainTitle = (TextView)findViewById(R.id.current_title);
             TextView mainArtist = (TextView)findViewById(R.id.current_artist);
 
             mainTitle.setText(musicSrv.getTitle());
             mainArtist.setText(musicSrv.getArtist());
+
+            ImageView albumView = (ImageView)findViewById(R.id.current_albumart);
+            String albumId = musicSrv.getAlbumId();
+            ContentResolver albumResolver = getContentResolver();
+            Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
+                    new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
+                    MediaStore.Audio.Albums._ID + "=?",                                              //Selection filter... question marks substitute 4th row args
+                    new String[] {String.valueOf(albumId)},                                         //Args for filter
+                    null);
+
+            if (albumCursor.moveToFirst()) {
+                String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
+
+                File file = new File(albumString);
+
+                if (file.exists()) {
+
+                    Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
+                    RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+
+                    albumArt.setCornerRadius(1000.0f);
+                    albumArt.setAntiAlias(true);
+
+                    albumView.setImageDrawable(albumArt);
+                }
+            }
         }
     };
 
@@ -257,21 +297,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void chooseAlbum(View view) {
-        if (playbackPaused) {
-            playbackPaused = false;
-        }
-
-        playList.clear();
-        System.out.println(view.getTag());
-        for(Song song : songList) {
-            if (song.getAlbumId().equals(view.getTag())) {
-                playList.add(song);
+        if (musicBound) {
+            if (playbackPaused) {
+                playbackPaused = false;
             }
+
+            playList.clear();
+            System.out.println(view.getTag());
+            for (Song song : songList) {
+                if (song.getAlbumId().equals(view.getTag())) {
+                    playList.add(song);
+                }
+            }
+            musicSrv.setList(playList);
+            musicSrv.setSong((int) Math.floor(Math.random() * playList.size()));
+            musicSrv.playSong();
+            openPlayer();
         }
-        musicSrv.setList(playList);
-        musicSrv.setSong((int)Math.floor(Math.random()*playList.size()));
-        musicSrv.playSong();
-        openPlayer();
     }
 
     @Override
@@ -335,12 +377,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void shuffleAll(View view) {
-        musicSrv.setShuffle(true);
-        playList.addAll(songList);
-        musicSrv.setList(playList);
-        musicSrv.setSong((int)Math.floor(Math.random()*songList.size()));
-        musicSrv.playSong();
-        openPlayer();
+        if (musicBound) {
+            musicSrv.setShuffle(true);
+            playList.addAll(songList);
+            musicSrv.setList(playList);
+            musicSrv.setSong((int) Math.floor(Math.random() * playList.size()));
+            musicSrv.playSong();
+            if (playbackPaused) {
+                playbackPaused = false;
+            }
+            openPlayer();
+        }
+    }
+
+    public void shuffleAll() {
+        if (musicBound) {
+            musicSrv.setShuffle(true);
+            playList.addAll(songList);
+            musicSrv.setList(playList);
+            musicSrv.setSong((int) Math.floor(Math.random() * playList.size()));
+            musicSrv.playSong();
+            if (playbackPaused) {
+                playbackPaused = false;
+            }
+            openPlayer();
+        }
     }
 
     public void openPlayer() {
