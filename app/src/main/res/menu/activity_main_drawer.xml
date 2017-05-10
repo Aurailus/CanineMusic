@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/nav_id3"
+        android:icon="@drawable/ic_menu_edit"
+        android:title="@string/nav_id3" />
+
+    <item android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_menu_settings"
+        android:title="@string/nav_settings" />
+
+    <item android:id="@+id/nav_ringtone"
+        android:icon="@drawable/ic_menu_ringtone"
+        android:title="@string/nav_ringtone" />
+
+    <item android:id="@+id/nav_import"
+        android:icon="@drawable/ic_arrow_right"
+        android:title="@string/nav_import" />
+
+    <item android:id="@+id/nav_share"
+        android:icon="@drawable/ic_menu_share"
+        android:title="@string/nav_share" />
+
+    <item android:title="@string/pinned_items"
+          android:id="@+id/pinned_items">
+        <menu android:id="@+id/pinned_group">
+            <item
+                android:id="@+id/add_pin"
+                android:icon="@drawable/ic_add_circle"
+                android:title="@string/add_pin" />
+        </menu>
+    </item>
+
+    <item android:title="@string/extra_items">
+        <menu>
+            <item android:id="@+id/nav_rate"
+                  android:icon="@drawable/ic_menu_rate"
+                  android:title="@string/nav_rate" />
+
+            <item android:id="@+id/nav_about"
+                  android:icon="@drawable/ic_artist"
+                  android:title="@string/nav_about" />
+        </menu>
+    </item>
+</menu>
