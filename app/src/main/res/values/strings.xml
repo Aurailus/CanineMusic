@@ -34,11 +34,7 @@
 
     <string name="grid_mode">Grid View</string>
     <string name="list_mode">List View</string>
-<<<<<<< HEAD
     <string name="action_settings">Settings</string>
 
     <string name="title_activity_queue">Queue</string>
-=======
->>>>>>> 8ee0bd5d67f8dac771a69aaacb3c67e4bf1212bf
-
 </resources>

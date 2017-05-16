@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-<<<<<<< HEAD
           package="com.aurailus.caninemusic">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-=======
-    package="com.aurailus.caninemusic">
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
->>>>>>> 8ee0bd5d67f8dac771a69aaacb3c67e4bf1212bf
 
     <application
         android:allowBackup="true"
@@ -26,7 +18,6 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="user">
-<<<<<<< HEAD
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -36,21 +27,10 @@
         </activity>
         <activity
             android:name=".PlayerActivity"
-=======
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".PlayerActivity"
->>>>>>> 8ee0bd5d67f8dac771a69aaacb3c67e4bf1212bf
             android:label="Player"
             android:launchMode="singleTop"
             android:screenOrientation="user"/>
 
-<<<<<<< HEAD
         <service android:name=".MusicService"/>
 
         <uses-library
@@ -66,12 +46,6 @@
             android:label="@string/title_activity_queue"
             android:theme="@style/AppTheme">
         </activity>
-=======
-        <service android:name=".MusicService" />
-
-        <uses-library android:required="false" android:name="com.sec.android.app.multiwindow" />
-        <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
->>>>>>> 8ee0bd5d67f8dac771a69aaacb3c67e4bf1212bf
     </application>
 
 </manifest>

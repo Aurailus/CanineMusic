@@ -40,18 +40,20 @@ public class Album {
 
         if (albumCursor.moveToFirst()) {
             String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
-            File file = new File(albumString);
 
-            if (file.exists()) {
+            if (albumString != null) {
+                File file = new File(albumString);
 
-                Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
-                albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+                if (file.exists()) {
 
-                albumArt.setCornerRadius(1000.0f);
-                albumArt.setAntiAlias(true);
+                    Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
+                    albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+
+                    albumArt.setCornerRadius(1000.0f);
+                    albumArt.setAntiAlias(true);
+                } else empty = true;
             }
             else empty = true;
-
         }
         else empty = true;
     }
@@ -69,5 +71,7 @@ public class Album {
     public Drawable getImage() {
         return albumArt;
     }
-    public boolean getEmpty() { return empty; }
+    public boolean getEmpty() {
+        return empty;
+    }
 }
