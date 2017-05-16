@@ -31,6 +31,7 @@ public class MusicService extends Service implements
     private Random rand;
     private Runnable playerStart;
     private Handler h;
+    private boolean prepared = false;
 
     @Override
     public void onCreate() {
@@ -80,6 +81,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer player) {
+        prepared = true;
         h.removeCallbacks(playerStart);
         int delay = 250;
         h.postDelayed(playerStart, delay);
@@ -127,6 +129,7 @@ public class MusicService extends Service implements
 
     public void playSong(){
         player.reset();
+        prepared = false;
         Song playSong = songs.get(ind);
         songTitle = playSong.getTitle();
         songArtist = playSong.getArtist();
@@ -178,6 +181,9 @@ public class MusicService extends Service implements
 
     public boolean isPlaying() {
         return player.isPlaying();
+    }
+    public boolean isPrepared() {
+        return prepared;
     }
     public void pausePlayer() {
         player.pause();

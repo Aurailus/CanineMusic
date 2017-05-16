@@ -26,8 +26,8 @@
         <menu android:id="@+id/pinned_group">
             <item
                 android:id="@+id/add_pin"
-                android:icon="@drawable/ic_add_circle"
-                android:title="@string/add_pin" />
+                android:icon="@drawable/ic_info"
+                android:title="@string/pinned_info" />
         </menu>
     </item>
 

@@ -1,6 +1,7 @@
 package com.aurailus.caninemusic;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Song> songList;
     private ArrayList<Song> playList;
     private ArrayList<Album> albumList;
-    private GridView albumGridView;
+    private ExpandableHeightGridView albumGridView;
     private ListView albumListView;
     private ViewSwitcher albumSwitcher;
     private MusicService musicSrv;
@@ -100,9 +101,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        albumGridView = (GridView)findViewById(R.id.album_grid);
+        albumGridView = (ExpandableHeightGridView)findViewById(R.id.album_grid);
         AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
         albumGridView.setAdapter(albumAdt);
+        albumGridView.setExpanded(true);
 
         albumListView = (ListView)findViewById(R.id.album_list);
         albumAdt = new AlbumAdapter(this, albumList, true);
@@ -175,17 +177,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (albumCursor.moveToFirst()) {
                 String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
 
-                File file = new File(albumString);
+                if (albumString != null) {
+                    File file = new File(albumString);
 
-                if (file.exists()) {
+                    if (file.exists()) {
 
-                    Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
-                    RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+                        Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
+                        RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
 
-                    albumArt.setCornerRadius(1000.0f);
-                    albumArt.setAntiAlias(true);
+                        albumArt.setCornerRadius(1000.0f);
+                        albumArt.setAntiAlias(true);
 
-                    albumView.setImageDrawable(albumArt);
+                        albumView.setImageDrawable(albumArt);
+                    }
                 }
             }
         }
@@ -322,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            this.moveTaskToBack(true);
         }
     }
 
@@ -330,9 +334,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.add_pin):
-                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                /*NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
                 MenuItem it = navigationView.getMenu().findItem(R.id.pinned_items);
-                it.getSubMenu().add(0, 0, 0, "C418").setIcon(R.drawable.ic_jumble);
+                it.getSubMenu().add(0, 0, 0, "C418").setIcon(R.drawable.ic_jumble);*/
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.alert_pinned_title).setMessage(R.string.alert_pinned_content).setCancelable(true).setPositiveButton("Ok",null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 break;
             case (R.id.nav_rate):
                 String appPck = getPackageName();

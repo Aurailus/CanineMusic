@@ -104,7 +104,9 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             updatePlayer();
 
             if (!musicSrv.isPlaying()) {
-                playPauseButton.setBackgroundResource(R.drawable.ic_playcircle);
+                if (musicSrv.isPrepared()) {
+                    playPauseButton.setBackgroundResource(R.drawable.ic_playcircle);
+                }
             }
 
             updateDelay = 250;
@@ -148,11 +150,13 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         if (albumCursor.moveToFirst()) {
             String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
 
-            File file = new File(albumString);
+            if (albumString != null) {
+                File file = new File(albumString);
 
-            if (file.exists()) {
-                albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
-                albumView.setImageBitmap(albumArt);
+                if (file.exists()) {
+                    albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
+                    albumView.setImageBitmap(albumArt);
+                }
             }
         }
     }
