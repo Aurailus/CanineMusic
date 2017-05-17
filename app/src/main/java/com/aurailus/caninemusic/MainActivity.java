@@ -11,7 +11,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.net.Uri;
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         albumGridView = (ExpandableHeightGridView)findViewById(R.id.album_grid);
         AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
         albumGridView.setAdapter(albumAdt);
-        albumGridView.setExpanded(true);
+        albumGridView.expand();
 
         albumListView = (ListView)findViewById(R.id.album_list);
         albumAdt = new AlbumAdapter(this, albumList, true);
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("musicPrepared"));
     }
 
-    void selectSection(MenuItem item) {
+    private void selectSection(MenuItem item) {
         ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper);
         switch (item.getItemId()) {
             case (R.id.nav_album):
@@ -156,8 +155,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             TextView appTitle = (TextView)findViewById(R.id.app_title);
             ConstraintLayout songDetails = (ConstraintLayout)findViewById(R.id.playing_details);
 
-            appTitle.setVisibility(View.INVISIBLE);
-            songDetails.setVisibility(View.VISIBLE);
+            //Hide the app title and start displaying song info
+            if (appTitle.getVisibility() == View.VISIBLE) {
+                appTitle.setVisibility(View.INVISIBLE);
+                songDetails.setVisibility(View.VISIBLE);
+            }
 
             TextView mainTitle = (TextView)findViewById(R.id.current_title);
             TextView mainArtist = (TextView)findViewById(R.id.current_artist);
@@ -170,27 +172,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ContentResolver albumResolver = getContentResolver();
             Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
                     new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
-                    MediaStore.Audio.Albums._ID + "=?",                                              //Selection filter... question marks substitute 4th row args
+                    MediaStore.Audio.Albums._ID + "=?",                                             //Selection filter... question marks substitute 4th row args
                     new String[] {String.valueOf(albumId)},                                         //Args for filter
                     null);
 
-            if (albumCursor.moveToFirst()) {
-                String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
+            if (albumCursor != null) {
+                if (albumCursor.moveToFirst()) {
+                    String albumString = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 
-                if (albumString != null) {
-                    File file = new File(albumString);
+                    if (albumString != null) {
+                        File file = new File(albumString);
 
-                    if (file.exists()) {
+                        if (file.exists()) {
 
-                        Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
-                        RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+                            Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
+                            RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
 
-                        albumArt.setCornerRadius(1000.0f);
-                        albumArt.setAntiAlias(true);
+                            albumArt.setCornerRadius(1000.0f);
+                            albumArt.setAntiAlias(true);
 
-                        albumView.setImageDrawable(albumArt);
+                            albumView.setImageDrawable(albumArt);
+
+                            //Rounded Bitmap for Notification
+                            Bitmap roundedBmp = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(roundedBmp);
+                            albumArt.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                            albumArt.draw(canvas);
+
+                            musicSrv.updateNotification(roundedBmp);
+                        }
+                        else musicSrv.updateNotification(null);
                     }
+                    else musicSrv.updateNotification(null);
                 }
+                else musicSrv.updateNotification(null);
+
+                albumCursor.close();
             }
         }
     };
@@ -231,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
     }
 
-    public void getSongs() {
+    private void getSongs() {
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
@@ -258,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void getAlbums() {
+    private void getAlbums() {
         ContentResolver albumResolver = getContentResolver();
         Uri albumUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[]columns = {android.provider.MediaStore.Audio.Albums._ID, android.provider.MediaStore.Audio.Albums.ALBUM_ID,
@@ -334,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.add_pin):
+                //TODO: Repurpose for adding stuff to nav list
                 /*NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
                 MenuItem it = navigationView.getMenu().findItem(R.id.pinned_items);
                 it.getSubMenu().add(0, 0, 0, "C418").setIcon(R.drawable.ic_jumble);*/
@@ -398,21 +416,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void shuffleAll() {
-        if (musicBound) {
-            musicSrv.setShuffle(true);
-            playList.addAll(songList);
-            musicSrv.setList(playList);
-            musicSrv.setSong((int) Math.floor(Math.random() * playList.size()));
-            musicSrv.playSong();
-            if (playbackPaused) {
-                playbackPaused = false;
-            }
-            openPlayer();
-        }
-    }
-
-    public void openPlayer() {
+    private void openPlayer() {
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         startActivity(intent);
     }

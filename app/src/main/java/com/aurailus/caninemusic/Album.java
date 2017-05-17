@@ -12,7 +12,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import java.io.File;
 
-public class Album {
+class Album {
     private String id, title, artist;
     private RoundedBitmapDrawable albumArt;
     private boolean empty = false;
@@ -30,7 +30,7 @@ public class Album {
         getAlbumArt(context);
     }
 
-    public void getAlbumArt(Context context) {
+    private void getAlbumArt(Context context) {
         ContentResolver albumResolver = context.getContentResolver();
         Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
                 new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
@@ -38,7 +38,7 @@ public class Album {
                 new String[] {String.valueOf(id)},                                              //Args for filter
                 null);
 
-        if (albumCursor.moveToFirst()) {
+        if (albumCursor != null && albumCursor.moveToFirst()) {
             String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
 
             if (albumString != null) {
@@ -52,10 +52,12 @@ public class Album {
                     albumArt.setCornerRadius(1000.0f);
                     albumArt.setAntiAlias(true);
                 } else empty = true;
-            }
-            else empty = true;
-        }
-        else empty = true;
+
+            } else empty = true;
+
+            albumCursor.close();
+        } else empty = true;
+
     }
 
     /*Getters and setters*/

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="64dp"
+    android:background="@color/notificationDark"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/noti_album_art"
+        android:contentDescription="@string/album_art"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        app:srcCompat="@drawable/ic_album_unknown" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/noti_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="12dp"
+            android:lines="1"
+            android:text="@string/unknown_data"
+            android:textColor="#ffffff"
+            tools:text="Song Title" />
+
+        <TextView
+            android:id="@+id/noti_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="12dp"
+            android:lines="1"
+            android:text="@string/unknown_data"
+            android:textColor="#ffffff"
+            tools:text="Song Artist" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/noti_prev_button"
+        android:contentDescription="@string/previous_song"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ripple_oval_light"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_play_prev" />
+
+    <ImageButton
+        android:id="@+id/noti_pause_button"
+        android:contentDescription="@string/play_pause"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ripple_oval_light"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_pause" />
+
+    <ImageButton
+        android:id="@+id/noti_next_button"
+        android:contentDescription="@string/next_song"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ripple_oval_light"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_play_next" />
+
+</LinearLayout>

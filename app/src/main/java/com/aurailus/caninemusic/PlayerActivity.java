@@ -32,7 +32,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private TextView artistView;
     private TextView lengthView;
     private TextView timeView;
-    private Bitmap albumArt;
     private ImageView albumView;
     private ImageButton playPauseButton;
     private boolean seekInteracting = false;
@@ -147,17 +146,19 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 new String[] {String.valueOf(albumId)},                                         //Args for filter
                 null);
 
-        if (albumCursor.moveToFirst()) {
+        if (albumCursor != null && albumCursor.moveToFirst()) {
             String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
 
             if (albumString != null) {
                 File file = new File(albumString);
 
                 if (file.exists()) {
-                    albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
+                    Bitmap albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
                     albumView.setImageBitmap(albumArt);
                 }
             }
+
+            albumCursor.close();
         }
     }
     private void updatePlayer() {

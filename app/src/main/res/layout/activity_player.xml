@@ -61,7 +61,7 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="20dp"
                 android:layout_marginEnd="12dp"
-                android:background="@drawable/ripple_oval_dark"
+                android:background="@drawable/ripple_oval"
                 android:contentDescription="@string/shuffle_state"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="w,1:1"
@@ -84,7 +84,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintRight_toLeftOf="@+id/button_playpause"
-                app:srcCompat="@drawable/ripple_oval_dark"/>
+                app:srcCompat="@drawable/ripple_oval"/>
 
             <ImageButton
                 android:id="@+id/button_playpause"
@@ -121,7 +121,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintLeft_toRightOf="@+id/button_playpause"
-                app:srcCompat="@drawable/ripple_oval_dark"/>
+                app:srcCompat="@drawable/ripple_oval"/>
 
             <ImageButton
                 android:id="@+id/button_repeat"
@@ -129,7 +129,7 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="20dp"
                 android:layout_marginStart="12dp"
-                android:background="@drawable/ripple_oval_dark"
+                android:background="@drawable/ripple_oval"
                 android:contentDescription="@string/repeat_state"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="w,1:1"

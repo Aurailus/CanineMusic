@@ -2,7 +2,7 @@ package com.aurailus.caninemusic;
 
 import java.util.Locale;
 
-public class Song {
+class Song {
     private long id, duration;
     private String title, artist, albumId, humanLength;
 

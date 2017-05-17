@@ -12,11 +12,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class AlbumAdapter extends BaseAdapter {
+class AlbumAdapter extends BaseAdapter {
     private ArrayList<Album> albums;
     private LayoutInflater albumInf;
     private boolean moredetails;
-    private ConstraintLayout albumLay;
 
     @Override
     public int getCount() {
@@ -36,6 +35,7 @@ public class AlbumAdapter extends BaseAdapter {
     @Override
     public View getView(int ind, View convertView, ViewGroup parent) {
 
+        ConstraintLayout albumLay;
         if (!moredetails) albumLay = (ConstraintLayout)albumInf.inflate(R.layout.album_grid, parent, false);
         else  albumLay = (ConstraintLayout)albumInf.inflate(R.layout.album_list, parent, false);
 
@@ -52,10 +52,13 @@ public class AlbumAdapter extends BaseAdapter {
 
         if (moredetails) {
             TextView playsView = (TextView) albumLay.findViewById(R.id.album_plays);
-            TextView lengthView = (TextView) albumLay.findViewById(R.id.album_length);
+            //TODO: Set up lengthview on album list view
+            //TextView lengthView = (TextView) albumLay.findViewById(R.id.album_length);
 
             artistView.setText(curAlbum.getArtist());
-            playsView.setText(" Plays");
+
+            //TODO: Set up album plays count
+            playsView.setText(R.string.plays);
             //lengthView.setText(curAlbum.getLength());
         }
 

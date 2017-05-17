@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#118888</color>
     <color name="colorAccent">#FF4081</color>
     <color name="categoryColor">#777777</color>
+    <color name="notificationDark">#333333</color>
 </resources>
