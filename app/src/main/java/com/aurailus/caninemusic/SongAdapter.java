@@ -53,10 +53,10 @@ class SongAdapter extends BaseAdapter {
             holder.albumArtView = (ImageView)convertView.findViewById(R.id.album_art);
             holder.songDuration = (TextView)convertView.findViewById(R.id.song_duration);
 
-            convertView.setTag(holder);
+            convertView.setTag(R.id.holder_id, holder);
         }
         else {
-            holder = (ViewHolder) convertView.getTag();
+            holder = (ViewHolder) convertView.getTag(R.id.holder_id);
         }
 
         Song curSong = songs.get(ind);
@@ -74,8 +74,7 @@ class SongAdapter extends BaseAdapter {
             }
         }
 
-        //TODO: Fix tag issue its breaking tapping the song to play
-        //songLay.setTag(ind);
+        convertView.setTag(R.id.index_id, ind);
         return convertView;
     }
 

@@ -34,6 +34,7 @@ import android.widget.ListView;
 import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Song> playList;
     private ArrayList<Album> albumList;
     private ExpandableHeightGridView albumGridView;
-    private ListView albumListView;
+    private ExpandableHeightListView albumListView;
     private ViewSwitcher albumSwitcher;
     private MusicService musicSrv;
     private Intent playIntent;
@@ -104,10 +105,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
         albumGridView.setAdapter(albumAdt);
         albumGridView.expand();
+        albumGridView.setFocusable(false);
 
-        albumListView = (ListView)findViewById(R.id.album_list);
+        albumListView = (ExpandableHeightListView)findViewById(R.id.album_list);
         albumAdt = new AlbumAdapter(this, albumList, true);
         albumListView.setAdapter(albumAdt);
+        albumListView.expand();
+        albumListView.setFocusable(false);
 
         albumSwitcher = (ViewSwitcher)findViewById(R.id.album_switcher);
 
@@ -116,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         BottomNavigationView bottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+        BottomNavigationViewHelper.disableShiftMode(bottomNav);
+
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -152,63 +158,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            TextView appTitle = (TextView)findViewById(R.id.app_title);
-            ConstraintLayout songDetails = (ConstraintLayout)findViewById(R.id.playing_details);
+        TextView appTitle = (TextView)findViewById(R.id.app_title);
+        ConstraintLayout songDetails = (ConstraintLayout)findViewById(R.id.playing_details);
 
-            //Hide the app title and start displaying song info
-            if (appTitle.getVisibility() == View.VISIBLE) {
-                appTitle.setVisibility(View.INVISIBLE);
-                songDetails.setVisibility(View.VISIBLE);
-            }
+        //Hide the app title and start displaying song info
+        if (appTitle.getVisibility() == View.VISIBLE) {
+            appTitle.setVisibility(View.INVISIBLE);
+            songDetails.setVisibility(View.VISIBLE);
+        }
 
-            TextView mainTitle = (TextView)findViewById(R.id.current_title);
-            TextView mainArtist = (TextView)findViewById(R.id.current_artist);
+        TextView mainTitle = (TextView)findViewById(R.id.current_title);
+        TextView mainArtist = (TextView)findViewById(R.id.current_artist);
 
-            mainTitle.setText(musicSrv.getTitle());
-            mainArtist.setText(musicSrv.getArtist());
+        mainTitle.setText(musicSrv.getTitle());
+        mainArtist.setText(musicSrv.getArtist());
 
-            ImageView albumView = (ImageView)findViewById(R.id.current_albumart);
-            String albumId = musicSrv.getAlbumId();
-            ContentResolver albumResolver = getContentResolver();
-            Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
-                    new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
-                    MediaStore.Audio.Albums._ID + "=?",                                             //Selection filter... question marks substitute 4th row args
-                    new String[] {String.valueOf(albumId)},                                         //Args for filter
-                    null);
+        ImageView albumView = (ImageView)findViewById(R.id.current_albumart);
+        String albumId = musicSrv.getAlbumId();
+        ContentResolver albumResolver = getContentResolver();
+        Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
+                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
+                MediaStore.Audio.Albums._ID + "=?",                                             //Selection filter... question marks substitute 4th row args
+                new String[] {String.valueOf(albumId)},                                         //Args for filter
+                null);
 
-            if (albumCursor != null) {
-                if (albumCursor.moveToFirst()) {
-                    String albumString = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+        if (albumCursor != null) {
+            if (albumCursor.moveToFirst()) {
+                String albumString = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 
-                    if (albumString != null) {
-                        File file = new File(albumString);
+                if (albumString != null) {
+                    File file = new File(albumString);
 
-                        if (file.exists()) {
+                    if (file.exists()) {
 
-                            Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
-                            RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+                        Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
+                        RoundedBitmapDrawable albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
 
-                            albumArt.setCornerRadius(1000.0f);
-                            albumArt.setAntiAlias(true);
+                        albumArt.setCornerRadius(1000.0f);
+                        albumArt.setAntiAlias(true);
 
-                            albumView.setImageDrawable(albumArt);
+                        albumView.setImageDrawable(albumArt);
 
-                            //Rounded Bitmap for Notification
-                            Bitmap roundedBmp = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888);
-                            Canvas canvas = new Canvas(roundedBmp);
-                            albumArt.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                            albumArt.draw(canvas);
+                        //Rounded Bitmap for Notification
+                        Bitmap roundedBmp = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(roundedBmp);
+                        albumArt.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                        albumArt.draw(canvas);
 
-                            musicSrv.updateNotification(roundedBmp);
-                        }
-                        else musicSrv.updateNotification(null);
+                        musicSrv.updateNotification(roundedBmp);
                     }
                     else musicSrv.updateNotification(null);
                 }
                 else musicSrv.updateNotification(null);
-
-                albumCursor.close();
             }
+            else musicSrv.updateNotification(null);
+
+            albumCursor.close();
+        }
         }
     };
 
@@ -309,7 +315,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void chooseSong(View view) {
-        musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
+        playList.addAll(songList);
+        musicSrv.setList(playList);
+        musicSrv.setSong(Integer.parseInt(view.getTag(R.id.index_id).toString()));
         musicSrv.playSong();
         if (playbackPaused) {
             playbackPaused = false;
@@ -319,12 +327,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void chooseAlbum(View view) {
         if (musicBound) {
-            if (playbackPaused) {
-                playbackPaused = false;
-            }
-
             playList.clear();
-            System.out.println(view.getTag());
+            System.out.println(view.getTag(R.id.index_id));
             for (Song song : songList) {
                 if (song.getAlbumId().equals(view.getTag())) {
                     playList.add(song);
@@ -333,6 +337,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             musicSrv.setList(playList);
             musicSrv.setSong((int) Math.floor(Math.random() * playList.size()));
             musicSrv.playSong();
+
+            if (playbackPaused) {
+                playbackPaused = false;
+            }
             openPlayer();
         }
     }
@@ -382,16 +390,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void switchAlbumView(View view) {
         if (albumIsGrid) {
-            albumListView.setSelection(0);
+            ScrollView s = (ScrollView)findViewById(R.id.grid_scrollview);
+            s.fullScroll(ScrollView.FOCUS_UP);
+            s = (ScrollView)findViewById(R.id.list_scrollview);
+            s.fullScroll(ScrollView.FOCUS_UP);
             albumSwitcher.setDisplayedChild(1);
-            TextView v = (TextView)findViewById(R.id.album_view_mode);
-            v.setText(R.string.list_mode);
             albumIsGrid = false;
         }
         else {
-            albumGridView.setSelection(0);
-            TextView v = (TextView)findViewById(R.id.album_view_mode);
-            v.setText(R.string.grid_mode);
+            ScrollView s = (ScrollView)findViewById(R.id.grid_scrollview);
+            s.fullScroll(ScrollView.FOCUS_UP);
+            s = (ScrollView)findViewById(R.id.list_scrollview);
+            s.fullScroll(ScrollView.FOCUS_UP);
             albumSwitcher.setDisplayedChild(0);
             albumIsGrid = true;
         }

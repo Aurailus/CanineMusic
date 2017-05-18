@@ -1,9 +1,11 @@
 package com.aurailus.caninemusic;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
@@ -16,6 +18,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.RemoteViews;
 
 import java.util.ArrayList;
@@ -32,10 +35,12 @@ public class MusicService extends Service implements
     private static final int NOTIFY_ID = 1;
     private boolean shuffle = true;
     private Random rand;
-    private Runnable playerStart;
+    private Runnable playerStart, updateSeekbar;
     private Handler h;
     private boolean prepared = false;
     private Intent notIntent;
+    private RemoteViews view, bigView;
+    private Notification notification;
 
     @Override
     public void onCreate() {
@@ -52,6 +57,12 @@ public class MusicService extends Service implements
                 System.out.println("Playback started");
                 player.start();
                 prepared = true;
+            }
+        };
+        updateSeekbar = new Runnable(){
+            public void run(){
+                setSeekbar();
+                h.postDelayed(this, 1000);
             }
         };
 
@@ -90,10 +101,38 @@ public class MusicService extends Service implements
     @Override
     public void onPrepared(MediaPlayer player) {
         int delay = 250;
+        h.removeCallbacks(updateSeekbar);
         h.postDelayed(playerStart, delay);
+        h.postDelayed(updateSeekbar, 250);
 
         Intent intent = new Intent("musicPrepared");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void setSeekbar() {
+        if (notification != null) {
+            view.setProgressBar(R.id.noti_seekbar, Math.round(getLength()), Math.round(getTime()), false);
+            bigView.setProgressBar(R.id.noti_seekbar, Math.round(getLength()), Math.round(getTime()), false);
+            Notification.Builder builder = new Notification.Builder(this);
+            PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.setContentIntent(pendInt)
+                    .setContentText(songTitle)
+                    .setSmallIcon(R.drawable.ic_play)
+                    .setTicker(songTitle)
+                    .setContentTitle("Playing " + songTitle);
+
+            if (Build.VERSION.SDK_INT < 24) {
+                //noinspection deprecation
+                builder.setContent(view);
+            } else {
+                builder.setCustomContentView(view);
+                builder.setCustomBigContentView(bigView);
+            }
+
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(NOTIFY_ID, builder.build());
+        }
     }
 
     public void setList(ArrayList<Song> songs) {
@@ -110,7 +149,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-
+        System.out.println("focus");
     }
 
     public class MusicBinder extends Binder {
@@ -123,14 +162,13 @@ public class MusicService extends Service implements
         PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder builder = new Notification.Builder(this);
 
-        RemoteViews view = new RemoteViews(this.getPackageName(), R.layout.notification_view);
-        RemoteViews bigView = new RemoteViews(this.getPackageName(), R.layout.notification_big_view);
+        view = new RemoteViews(this.getPackageName(), R.layout.notification_view);
+        bigView = new RemoteViews(this.getPackageName(), R.layout.notification_big_view);
 
         view.setImageViewResource(R.id.noti_prev_button, R.drawable.ic_noti_prev); //Previous button
         view.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause); //Pause button
         view.setImageViewResource(R.id.noti_next_button, R.drawable.ic_noti_next); //Next button
 
-        view.setImageViewBitmap(R.id.noti_album_art, albumArt); //Album art
         view.setTextViewText(R.id.noti_title, songTitle); //Title
         view.setTextViewText(R.id.noti_artist, songArtist); //Artist
 
@@ -138,14 +176,20 @@ public class MusicService extends Service implements
         bigView.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause); //Pause button
         bigView.setImageViewResource(R.id.noti_next_button, R.drawable.ic_noti_next); //Next button
 
-        bigView.setImageViewBitmap(R.id.noti_album_art, albumArt); //Album art
         bigView.setTextViewText(R.id.noti_title, songTitle); //Title
         bigView.setTextViewText(R.id.noti_artist, songArtist); //Artist
 
+        if (albumArt != null) {
+            view.setImageViewBitmap(R.id.noti_album_art, albumArt);
+            bigView.setImageViewBitmap(R.id.noti_album_art, albumArt);
+        }
+        else {
+            view.setImageViewResource(R.id.noti_album_art, R.drawable.ic_album_unknown);
+            bigView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_album_unknown);
+        }
+
         builder.setContentIntent(pendInt)
                 .setContentText(songTitle)
-                .setPriority(Notification.PRIORITY_MAX)
-                .setWhen(0)
                 .setSmallIcon(R.drawable.ic_play)
                 .setTicker(songTitle)
                 .setContentTitle("Playing " + songTitle);
@@ -159,11 +203,11 @@ public class MusicService extends Service implements
             builder.setCustomBigContentView(bigView);
         }
 
-        Notification not = builder.build();
-        startForeground(NOTIFY_ID, not);
+        notification = builder.build();
+        startForeground(NOTIFY_ID, notification);
     }
 
-    public void playSong(){
+    public void playSong() {
         player.reset();
         prepared = false;
         Song playSong = songs.get(ind);

@@ -16,8 +16,7 @@
         android:background="@drawable/ripple_rectangle_light"
         android:clickable="true"
         android:onClick="openPlayer"
-        android:elevation="4dp"
-        app:srcCompat="@drawable/ripple_rectangle_light">
+        android:elevation="4dp">
 
         <ImageButton
             android:id="@+id/open_drawer"
@@ -40,18 +39,21 @@
 
         <ImageView
             android:id="@+id/current_albumart"
-            android:contentDescription="@string/album_art"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/album_art"
+            android:cropToPadding="true"
+            android:scaleType="fitEnd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintLeft_toRightOf="@+id/open_drawer"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/logo_hires"
-            android:layout_marginStart="4dp"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.5"
+            app:srcCompat="@drawable/logo_hires" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/playing_details"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="120dp"
+    android:minHeight="112dp"
     android:background="@color/notificationDark"
     android:orientation="horizontal"
     android:weightSum="1">
@@ -12,12 +12,12 @@
     <ImageView
         android:id="@+id/noti_album_art"
         android:contentDescription="@string/album_art"
-        android:layout_width="104dp"
-        android:layout_height="104dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         app:srcCompat="@drawable/ic_album_unknown" />
 
     <LinearLayout
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="top"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="6dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -56,13 +56,26 @@
                 android:textColor="#ffffff"
                 tools:text="Song Artist" />
 
+            <ProgressBar
+                android:id="@+id/noti_seekbar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:progressTint="@color/colorAccent" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="0dp"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
