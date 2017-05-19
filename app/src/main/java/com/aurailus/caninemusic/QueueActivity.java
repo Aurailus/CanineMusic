@@ -12,6 +12,7 @@ public class QueueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_queue);
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void back(View view) {
         this.finish();
     }

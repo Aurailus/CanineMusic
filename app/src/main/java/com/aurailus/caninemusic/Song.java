@@ -1,12 +1,17 @@
 package com.aurailus.caninemusic;
 
+import java.io.Serializable;
 import java.util.Locale;
 
-class Song {
-    private long id, duration;
-    private String title, artist, albumId, humanLength;
+class Song implements Serializable {
+    private final long id;
+    private final long duration;
+    private final String title;
+    private final String artist;
+    private final String albumId;
+    private final String humanLength;
 
-    public Song(long id, String title, String artist, String albumId, long duration) {
+    Song(long id, String title, String artist, String albumId, long duration) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -35,10 +40,6 @@ class Song {
 
     public String getAlbumId() {
         return albumId;
-    }
-
-    public long getDuration() {
-        return duration;
     }
 
     public String getHumanLength() {

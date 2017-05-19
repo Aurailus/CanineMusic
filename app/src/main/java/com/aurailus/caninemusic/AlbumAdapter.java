@@ -13,9 +13,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 class AlbumAdapter extends BaseAdapter {
-    private ArrayList<Album> albums;
-    private LayoutInflater albumInf;
-    private boolean moredetails;
+    private final ArrayList<Album> albums;
+    private final LayoutInflater albumInf;
+    private final boolean moredetails;
 
     @Override
     public int getCount() {
@@ -45,7 +45,7 @@ class AlbumAdapter extends BaseAdapter {
 
         Album curAlbum = albums.get(ind);
         albumView.setText(curAlbum.getTitle());
-        if (!curAlbum.getEmpty()) {
+        if (curAlbum.getImage() != null) {
             Drawable img = curAlbum.getImage();
             albumArtView.setImageDrawable(img);
         }

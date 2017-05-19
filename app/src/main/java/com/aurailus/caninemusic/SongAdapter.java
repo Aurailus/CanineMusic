@@ -1,7 +1,6 @@
 package com.aurailus.caninemusic;
 
 import android.graphics.drawable.Drawable;
-import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,13 +8,12 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 class SongAdapter extends BaseAdapter {
-    private ArrayList<Song> songs;
-    private ArrayList<Album> albumart;
-    private LayoutInflater songInf;
+    private final ArrayList<Song> songs;
+    private final ArrayList<Album> albumart;
+    private final LayoutInflater songInf;
 
     static class ViewHolder {
         TextView songView;
@@ -66,10 +64,13 @@ class SongAdapter extends BaseAdapter {
 
         for(Album curAlbum : albumart) {
             if (curAlbum.getId().equals(curSong.getAlbumId())) {
-                if (!curAlbum.getEmpty()) {
+                if (curAlbum.getImage() != null) {
                     Drawable img = curAlbum.getImage();
                     holder.albumArtView.setImageDrawable(img);
                     break;
+                }
+                else {
+                    holder.albumArtView.setImageResource(R.drawable.ic_album_unknown);
                 }
             }
         }
@@ -78,7 +79,7 @@ class SongAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public SongAdapter(Context c, ArrayList<Song> songs) {
+    SongAdapter(Context c, ArrayList<Song> songs) {
         this.songs = songs;
         albumart = new ArrayList<>();
 

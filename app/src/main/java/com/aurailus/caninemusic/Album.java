@@ -1,21 +1,14 @@
 package com.aurailus.caninemusic;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-
-import java.io.File;
 
 class Album {
-    private String id, title, artist;
+    private String id;
+    private String title;
+    private String artist;
     private RoundedBitmapDrawable albumArt;
-    private boolean empty = false;
 
     public Album(String id, String title, String artist, Context context) {
         this.id = id;
@@ -31,33 +24,7 @@ class Album {
     }
 
     private void getAlbumArt(Context context) {
-        ContentResolver albumResolver = context.getContentResolver();
-        Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
-                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
-                MediaStore.Audio.Albums._ID+ "=?",                                              //Selection filter... question marks substitute 4th row args
-                new String[] {String.valueOf(id)},                                              //Args for filter
-                null);
-
-        if (albumCursor != null && albumCursor.moveToFirst()) {
-            String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
-
-            if (albumString != null) {
-                File file = new File(albumString);
-
-                if (file.exists()) {
-
-                    Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
-                    albumArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
-
-                    albumArt.setCornerRadius(1000.0f);
-                    albumArt.setAntiAlias(true);
-                } else empty = true;
-
-            } else empty = true;
-
-            albumCursor.close();
-        } else empty = true;
-
+        albumArt = (RoundedBitmapDrawable)ImageHelper.findAlbumArtById(id, context);
     }
 
     /*Getters and setters*/
@@ -72,8 +39,5 @@ class Album {
     }
     public Drawable getImage() {
         return albumArt;
-    }
-    public boolean getEmpty() {
-        return empty;
     }
 }

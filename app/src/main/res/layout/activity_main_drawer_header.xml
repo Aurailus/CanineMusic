@@ -20,7 +20,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="6dp"
-        app:srcCompat="@drawable/logo_hires"
+        app:srcCompat="@mipmap/ic_logo_hq"
         android:antialias="true"
         android:contentDescription="@string/title_activity_main"/>
 

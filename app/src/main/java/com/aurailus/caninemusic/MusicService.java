@@ -18,7 +18,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.ProgressBar;
 import android.widget.RemoteViews;
 
 import java.util.ArrayList;
@@ -27,17 +26,18 @@ import java.util.Random;
 public class MusicService extends Service implements
     MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
+    private static final int NOTIFY_ID = 1;
     private MediaPlayer player;
     private ArrayList<Song> songs;
     private int ind;
-    private final IBinder musicBind = new MusicBinder();
+    private IBinder musicBind;
     private String songTitle, songArtist;
-    private static final int NOTIFY_ID = 1;
-    private boolean shuffle = true;
+    private boolean shuffle;
     private Random rand;
-    private Runnable playerStart, updateSeekbar;
     private Handler h;
-    private boolean prepared = false;
+    private Runnable playerStart;
+    private Runnable updateSeekbar;
+    private boolean prepared;
     private Intent notIntent;
     private RemoteViews view, bigView;
     private Notification notification;
@@ -45,7 +45,10 @@ public class MusicService extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
+        shuffle = false;
         ind = 0;
+        prepared = false;
+        musicBind = new MusicBinder();
         player = new MediaPlayer();
         rand = new Random();
 
@@ -54,7 +57,6 @@ public class MusicService extends Service implements
         h = new Handler();
         playerStart = new Runnable(){
             public void run(){
-                System.out.println("Playback started");
                 player.start();
                 prepared = true;
             }
@@ -117,6 +119,7 @@ public class MusicService extends Service implements
             PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             builder.setContentIntent(pendInt)
+                    .setPriority(Notification.PRIORITY_MAX)
                     .setContentText(songTitle)
                     .setSmallIcon(R.drawable.ic_play)
                     .setTicker(songTitle)
@@ -152,7 +155,7 @@ public class MusicService extends Service implements
         System.out.println("focus");
     }
 
-    public class MusicBinder extends Binder {
+    class MusicBinder extends Binder {
         MusicService getService() {
             return MusicService.this;
         }
@@ -189,6 +192,7 @@ public class MusicService extends Service implements
         }
 
         builder.setContentIntent(pendInt)
+                .setPriority(Notification.PRIORITY_MAX)
                 .setContentText(songTitle)
                 .setSmallIcon(R.drawable.ic_play)
                 .setTicker(songTitle)

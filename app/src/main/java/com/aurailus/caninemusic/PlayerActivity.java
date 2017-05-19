@@ -47,7 +47,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         super.onDestroy();
         if (isFinishing()) {
             h.removeCallbacks(r);
-            System.out.println("destroy");
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
             stopService(playIntent);
             unbindService(musicConnection);
@@ -199,11 +198,18 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
     }
 
+    public void openQueue(View view) {
+        Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
+        startActivity(intent);
+    }
+
+    @SuppressWarnings("UnusedParameters")
     public void nextSong(View view) {
         musicSrv.playNext();
         playPauseButton.setBackgroundResource(R.drawable.ic_pausecircle);
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void previousSong(View view) {
         if (musicSrv.getTime() > 3000) {
             musicSrv.seek(0);
@@ -214,6 +220,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void back(View view) {
         this.finish();
     }
