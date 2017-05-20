@@ -47,10 +47,12 @@ import com.aurailus.caninemusic.MusicService.*;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String STATE_PLAYLIST = "playList";
+    private static final String STATE_VIEW = "curView";
     private ArrayList<Song> songList;
     private ArrayList<Song> playList;
     private ArrayList<Album> albumList;
     private ViewSwitcher albumSwitcher;
+    private PageView currentView;
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean albumIsGrid = true;
@@ -95,6 +97,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         initializePlaylist(savedInstanceState);
+        if (savedInstanceState == null) {
+            currentView = PageView.ALBUMS;
+        }
+        else {
+            currentView = PageView.atPosition(savedInstanceState.getInt(STATE_VIEW));
+            ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper);
+            flipper.setDisplayedChild(currentView.getPosition());
+        }
 
         //Connect to MusicService
         if (playIntent == null) {
@@ -206,21 +216,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper);
         switch (item.getItemId()) {
             case (R.id.nav_album):
-                flipper.setDisplayedChild(0);
+                currentView = PageView.ALBUMS;
                 break;
             case (R.id.nav_playlist):
-                flipper.setDisplayedChild(1);
+                currentView = PageView.PLAYLISTS;
                 break;
             case (R.id.nav_track):
-                flipper.setDisplayedChild(2);
+                currentView = PageView.TRACKS;
                 break;
             case (R.id.nav_artist):
-                flipper.setDisplayedChild(3);
+                currentView = PageView.ARTISTS;
                 break;
             case (R.id.nav_genre):
-                flipper.setDisplayedChild(4);
+                currentView = PageView.GENRES;
                 break;
         }
+        flipper.setDisplayedChild(currentView.getPosition());
     }
 
     @Override
@@ -229,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onSaveInstanceState(outState);
         // Save our own state now
         outState.putSerializable(STATE_PLAYLIST, playList);
+        outState.putSerializable(STATE_VIEW, currentView);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
