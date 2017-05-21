@@ -92,6 +92,7 @@ public class MusicService extends Service implements
     @Override
     public void onDestroy() {
         stopForeground(true);
+        h.removeCallbacks(updateSeekbar);
     }
 
     @Override
@@ -165,8 +166,8 @@ public class MusicService extends Service implements
         PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder builder = new Notification.Builder(this);
 
-        view = new RemoteViews(this.getPackageName(), R.layout.notification_view);
-        bigView = new RemoteViews(this.getPackageName(), R.layout.notification_big_view);
+        view = new RemoteViews(this.getPackageName(), R.layout.notification);
+        bigView = new RemoteViews(this.getPackageName(), R.layout.notification_big);
 
         view.setImageViewResource(R.id.noti_prev_button, R.drawable.ic_noti_prev); //Previous button
         view.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause); //Pause button

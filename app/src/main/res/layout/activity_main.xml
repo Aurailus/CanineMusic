@@ -65,7 +65,7 @@
         </android.support.design.widget.BottomNavigationView>
 
         <include
-            layout="@layout/main_toolbar"
+            layout="@layout/toolbar_main"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clipChildren="false"
@@ -96,7 +96,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/activity_main_drawer_header"
+        app:headerLayout="@layout/drawer_header_main"
         app:menu="@menu/activity_main_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

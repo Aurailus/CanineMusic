@@ -36,8 +36,8 @@ class AlbumAdapter extends BaseAdapter {
     public View getView(int ind, View convertView, ViewGroup parent) {
 
         ConstraintLayout albumLay;
-        if (!moredetails) albumLay = (ConstraintLayout)albumInf.inflate(R.layout.album_grid, parent, false);
-        else  albumLay = (ConstraintLayout)albumInf.inflate(R.layout.album_list, parent, false);
+        if (!moredetails) albumLay = (ConstraintLayout)albumInf.inflate(R.layout.item_album_grid, parent, false);
+        else  albumLay = (ConstraintLayout)albumInf.inflate(R.layout.item_album_list, parent, false);
 
         TextView albumView = (TextView)albumLay.findViewById(R.id.album_title);
         TextView artistView = (TextView)albumLay.findViewById(R.id.album_artist);

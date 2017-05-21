@@ -43,22 +43,8 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private int updateDelay;
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()) {
-            h.removeCallbacks(r);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-            stopService(playIntent);
-            unbindService(musicConnection);
-            musicSrv = null;
-        }
-    }
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_player);
 
         seek = (SeekBar) findViewById(R.id.song_seekbar);
@@ -89,6 +75,17 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         };
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()) {
+            h.removeCallbacks(r);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+            stopService(playIntent);
+            unbindService(musicConnection);
+            musicSrv = null;
+        }
+    }
 
    private ServiceConnection musicConnection = new ServiceConnection() {
 
@@ -201,6 +198,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     public void openQueue(View view) {
         Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -220,9 +218,15 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        back(null);
+    }
+
     @SuppressWarnings("UnusedParameters")
     public void back(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_up_in, R.anim.slide_up_out);
     }
 
     @Override

@@ -12,14 +12,14 @@ public class QueueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_queue);
     }
 
+    @Override
+    public void onBackPressed() {
+        back(null);
+    }
+
     @SuppressWarnings("UnusedParameters")
     public void back(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
-
-    @Override
-    public void onBackPressed() {
-        this.finish();
-    }
-
 }

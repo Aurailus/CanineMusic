@@ -48,11 +48,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final String STATE_PLAYLIST = "playList";
     private static final String STATE_VIEW = "curView";
+    private static final String STATE_PLAYINTENT = "playIntent";
     private ArrayList<Song> songList;
     private ArrayList<Song> playList;
     private ArrayList<Album> albumList;
     private ViewSwitcher albumSwitcher;
-    private PageView currentView;
+    private static PageView currentView;
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean albumIsGrid = true;
@@ -97,20 +98,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         initializePlaylist(savedInstanceState);
+
         if (savedInstanceState == null) {
             currentView = PageView.ALBUMS;
+
+            //Connect to MusicService
+            //playIntent = new Intent(this, MusicService.class);
+            //startService(playIntent);
+            //bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
         }
         else {
-            currentView = PageView.atPosition(savedInstanceState.getInt(STATE_VIEW));
             ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper);
-            flipper.setDisplayedChild(currentView.getPosition());
+            flipper.setDisplayedChild(savedInstanceState.getInt(STATE_VIEW));
+
+            //Reconnect to MusicService
+            //playIntent = savedInstanceState.getParcelable(STATE_PLAYINTENT);
+            //bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
         }
 
-        //Connect to MusicService
-        if (playIntent == null) {
+        if (musicSrv == null) {
+
             playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
         }
 
         //Receive Broadcasts for Toolbar Song Details
@@ -125,13 +135,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
         albumGridView.setAdapter(albumAdt);
         albumGridView.expand();
-        //albumGridView.setFocusable(false);
+        albumGridView.setFocusable(false);
 
         ExpandableHeightListView albumListView = (ExpandableHeightListView) findViewById(R.id.album_list);
         albumAdt = new AlbumAdapter(this, albumList, true);
         albumListView.setAdapter(albumAdt);
         albumListView.expand();
-        //albumListView.setFocusable(false);
+        albumListView.setFocusable(false);
 
         albumSwitcher = (ViewSwitcher)findViewById(R.id.album_switcher);
 
@@ -240,7 +250,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onSaveInstanceState(outState);
         // Save our own state now
         outState.putSerializable(STATE_PLAYLIST, playList);
-        outState.putSerializable(STATE_VIEW, currentView);
+        outState.putInt(STATE_VIEW, currentView.getPosition());
+        outState.putParcelable(STATE_PLAYINTENT, playIntent);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -254,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView appTitle = (TextView)findViewById(R.id.app_title);
         ConstraintLayout songDetails = (ConstraintLayout)findViewById(R.id.playing_details);
 
-        //Hide the app title and start displaying song info
+        //Hide the app title and start displaying item_song info
         if (appTitle.getVisibility() == View.VISIBLE) {
             appTitle.setVisibility(View.INVISIBLE);
             songDetails.setVisibility(View.VISIBLE);
@@ -293,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
+        //unbindService(musicConnection);
         if (isFinishing()) {
             stopService(playIntent);
             unbindService(musicConnection);
@@ -476,11 +488,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void openPlayer() {
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_down_in, R.anim.slide_down_out);
     }
 
     @SuppressWarnings("UnusedParameters")
     public void openPlayer(View view) {
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_down_in, R.anim.slide_down_out);
     }
 }

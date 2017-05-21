@@ -43,7 +43,7 @@ class SongAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = songInf.inflate(R.layout.song, parent, false);
+            convertView = songInf.inflate(R.layout.item_song, parent, false);
             holder = new ViewHolder();
 
             holder.songView = (TextView)convertView.findViewById(R.id.song_title);
