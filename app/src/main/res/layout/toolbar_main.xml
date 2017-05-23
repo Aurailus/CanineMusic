@@ -18,12 +18,13 @@
         android:onClick="openPlayer"
         android:elevation="4dp">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/open_drawer"
             android:contentDescription="@string/drawer"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/ripple_oval_light"
@@ -42,6 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:adjustViewBounds="false"
@@ -62,6 +64,8 @@
             android:layout_marginBottom="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="4dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginTop="4dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -115,6 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:text="@string/title_activity_main"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="#ffffff"

@@ -264,6 +264,9 @@ public class MusicService extends Service implements
     public boolean getShuffle() {
         return shuffle;
     }
+    public ArrayList<Song> getList() {
+        return songs;
+    }
 
     public boolean isPlaying() {
         return player.isPlaying();

@@ -82,7 +82,7 @@
         app:layout_constraintRight_toLeftOf="@+id/overflow"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/overflow"
         android:layout_width="44dp"
         android:layout_height="0dp"

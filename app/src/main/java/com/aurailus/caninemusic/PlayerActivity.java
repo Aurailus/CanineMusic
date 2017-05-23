@@ -17,7 +17,6 @@ import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -33,7 +32,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private TextView lengthView;
     private TextView timeView;
     private ImageView albumView;
-    private ImageButton playPauseButton;
+    private ImageView playPauseButton;
     private boolean seekInteracting = false;
     private MusicService musicSrv;
     private boolean musicBound = false;
@@ -53,7 +52,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         timeView = (TextView) findViewById(R.id.current_time);
         lengthView = (TextView) findViewById(R.id.song_duration);
         albumView = (ImageView) findViewById(R.id.album_cover);
-        playPauseButton = (ImageButton) findViewById(R.id.button_playpause);
+        playPauseButton = (ImageView) findViewById(R.id.button_playpause);
 
         seek.setOnSeekBarChangeListener(this);
 

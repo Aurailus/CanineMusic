@@ -48,13 +48,15 @@
                         android:layout_marginBottom="8dp"
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginTop="8dp"
-                        android:layout_marginStart="16dp" />
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
                         android:layout_marginTop="8dp"
                         android:text="@string/grid_mode"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -62,13 +64,14 @@
                         app:layout_constraintRight_toLeftOf="@+id/albumViewSwitch"
                         app:layout_constraintTop_toTopOf="parent"/>
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/albumViewSwitch"
                         android:contentDescription="@string/switch_views"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/ripple_oval"
                         android:elevation="0dp"
@@ -123,7 +126,8 @@
                         android:layout_marginBottom="8dp"
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginTop="8dp"
-                        android:layout_marginStart="16dp" />
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp" />
 
                     <TextView
                         android:id="@+id/album_view_mode_alt"
@@ -131,6 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
                         android:layout_marginTop="8dp"
                         android:text="@string/list_mode"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -138,13 +143,14 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintRight_toLeftOf="@+id/albumViewSwitch_alt"/>
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/albumViewSwitch_alt"
                         android:contentDescription="@string/switch_views"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/ripple_oval"
                         android:elevation="0dp"

@@ -57,7 +57,7 @@
 
         </LinearLayout>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/noti_prev_button"
             android:contentDescription="@string/previous_song"
             android:layout_width="46dp"
@@ -67,7 +67,7 @@
             android:scaleType="fitXY"
             app:srcCompat="@drawable/ic_play_prev" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/noti_pause_button"
             android:contentDescription="@string/play_pause"
             android:layout_width="46dp"
@@ -77,7 +77,7 @@
             android:scaleType="fitXY"
             app:srcCompat="@drawable/ic_pause" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/noti_next_button"
             android:contentDescription="@string/next_song"
             android:layout_width="46dp"

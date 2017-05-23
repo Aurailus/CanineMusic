@@ -74,7 +74,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/include"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <!--<android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
             android:onClick="shuffleAll"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
             app:layout_constraintRight_toRightOf="parent"
-            app:srcCompat="@drawable/ic_shuffle_white"/>
+            app:srcCompat="@drawable/ic_shuffle_white"/>-->
 
     </android.support.constraint.ConstraintLayout>
 
