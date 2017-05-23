@@ -1,5 +1,5 @@
 # [Canine Music Player](http://canine.woofbark.dog)
-[![Canine Music Logo](https://github.com/Aurailus/CanineMusic/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)](http://canine.woofbark.dog)
+[![Canine Music Logo](https://github.com/Aurailus/CanineMusic/resources/canine_logo_raster.png)
 
 A clean, lightweight Music Player for Android.
 
