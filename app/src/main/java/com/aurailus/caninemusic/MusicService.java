@@ -39,6 +39,7 @@ public class MusicService extends Service implements
     private Runnable updateSeekbar;
     private boolean prepared;
     private Intent notIntent;
+    private Intent playingStateIntent;
     private RemoteViews view, bigView;
     private Notification notification;
 
@@ -70,6 +71,8 @@ public class MusicService extends Service implements
 
         notIntent = new Intent(this, MainActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        playingStateIntent = new Intent("playingState");
     }
 
     @Override
@@ -133,12 +136,16 @@ public class MusicService extends Service implements
                 builder.setCustomContentView(view);
                 builder.setCustomBigContentView(bigView);
             }
-            if (Build.VERSION.SDK_INT >= 16) {
-                builder.setPriority(Notification.PRIORITY_MAX);
-            }
 
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(NOTIFY_ID, builder.build());
+
+            if (Build.VERSION.SDK_INT >= 16) {
+                builder.setPriority(Notification.PRIORITY_MAX);
+                mNotificationManager.notify(NOTIFY_ID, builder.build());
+            }
+            else {
+                mNotificationManager.notify(NOTIFY_ID, builder.getNotification());
+            }
         }
     }
 
@@ -154,11 +161,6 @@ public class MusicService extends Service implements
         player.setOnErrorListener(this);
     }
 
-    @Override
-    public void onAudioFocusChange(int focusChange) {
-        System.out.println("focus");
-    }
-
     class MusicBinder extends Binder {
         MusicService getService() {
             return MusicService.this;
@@ -172,19 +174,19 @@ public class MusicService extends Service implements
         view = new RemoteViews(this.getPackageName(), R.layout.notification);
         bigView = new RemoteViews(this.getPackageName(), R.layout.notification_big);
 
-        view.setImageViewResource(R.id.noti_prev_button, R.drawable.ic_noti_prev); //Previous button
-        view.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause); //Pause button
-        view.setImageViewResource(R.id.noti_next_button, R.drawable.ic_noti_next); //Next button
+        //Small View
+        view.setImageViewResource(R.id.noti_prev_button, R.drawable.ic_noti_prev);
+        view.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause);
+        view.setImageViewResource(R.id.noti_next_button, R.drawable.ic_noti_next);
+        view.setTextViewText(R.id.noti_title, songTitle);
+        view.setTextViewText(R.id.noti_artist, songArtist);
 
-        view.setTextViewText(R.id.noti_title, songTitle); //Title
-        view.setTextViewText(R.id.noti_artist, songArtist); //Artist
-
-        bigView.setImageViewResource(R.id.noti_prev_button, R.drawable.ic_noti_prev); //Previous button
-        bigView.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause); //Pause button
-        bigView.setImageViewResource(R.id.noti_next_button, R.drawable.ic_noti_next); //Next button
-
-        bigView.setTextViewText(R.id.noti_title, songTitle); //Title
-        bigView.setTextViewText(R.id.noti_artist, songArtist); //Artist
+        //Big View
+        bigView.setImageViewResource(R.id.noti_prev_button, R.drawable.ic_noti_prev);
+        bigView.setImageViewResource(R.id.noti_pause_button, R.drawable.ic_noti_pause);
+        bigView.setImageViewResource(R.id.noti_next_button, R.drawable.ic_noti_next);
+        bigView.setTextViewText(R.id.noti_title, songTitle);
+        bigView.setTextViewText(R.id.noti_artist, songArtist);
 
         if (albumArt != null) {
             view.setImageViewBitmap(R.id.noti_album_art, albumArt);
@@ -202,7 +204,6 @@ public class MusicService extends Service implements
                 .setContentTitle("Playing " + songTitle);
 
         if (Build.VERSION.SDK_INT < 24) {
-            //noinspection deprecation
             builder.setContent(view);
         }
         else {
@@ -220,22 +221,36 @@ public class MusicService extends Service implements
     }
 
     public void playSong() {
-        player.reset();
-        prepared = false;
-        Song playSong = songs.get(ind);
-        songTitle = playSong.getTitle();
-        songArtist = playSong.getArtist();
-        long curSong = playSong.getId();
-        Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, curSong);
+        AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        int result = am.requestAudioFocus(this,  AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            player.reset();
+            prepared = false;
+            Song playSong = songs.get(ind);
+            songTitle = playSong.getTitle();
+            songArtist = playSong.getArtist();
+            long curSong = playSong.getId();
+            Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, curSong);
 
-        try {
-            player.setDataSource(getApplicationContext(), trackUri);
+            try {
+                player.setDataSource(getApplicationContext(), trackUri);
+            }
+            catch(Exception e) {
+                Log.e("MUSIC SERVICE", "Error setting data source", e);
+            }
+            h.removeCallbacks(playerStart);
+            player.prepareAsync();
         }
-        catch(Exception e) {
-            Log.e("MUSIC SERVICE", "Error setting data source", e);
+    }
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        if(focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+            pausePlayer();
         }
-        h.removeCallbacks(playerStart);
-        player.prepareAsync();
+        else if(focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+            goCheckFocus();
+        }
     }
 
     public void playPrev() {
@@ -282,13 +297,24 @@ public class MusicService extends Service implements
         return prepared;
     }
     public void pausePlayer() {
+        playingStateIntent.putExtra("State", false);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(playingStateIntent);
         player.pause();
     }
     public void seek(int pos) {
         player.seekTo(pos);
     }
     public void go() {
+        playingStateIntent.putExtra("State", true);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(playingStateIntent);
         player.start();
+    }
+    public void goCheckFocus() {
+        AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        int result = am.requestAudioFocus(this,  AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            go();
+        }
     }
 
     public void setShuffle(boolean shuffle) {

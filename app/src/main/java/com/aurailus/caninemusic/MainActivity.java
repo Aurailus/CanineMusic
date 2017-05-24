@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -212,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             musicSrv = binder.getService();
             musicSrv.setList(playList);
             musicBound = true;
+            setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
 
             if (musicSrv.isPlaying()) {
                 setToolbarContent();

@@ -1,29 +1,24 @@
 package com.aurailus.caninemusic;
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
@@ -48,6 +43,9 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.player_toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
 
         seek = (SeekBar) findViewById(R.id.song_seekbar);
         titleView = (TextView) findViewById(R.id.song_title);
@@ -57,6 +55,10 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         albumView = (ImageView) findViewById(R.id.album_cover);
         playPauseButton = (ImageView) findViewById(R.id.button_playpause);
 
+        View actionBar = (View)findViewById(R.id.player_actionbar);
+        Palette
+        actionBar.setBackgroundColor(0x0033ff);
+
         seek.setOnSeekBarChangeListener(this);
 
         if (playIntent == null) {
@@ -65,8 +67,8 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             startService(playIntent);
         }
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("musicPrepared"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("musicPrepared"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(pMessageReciever, new IntentFilter("playingState"));
 
         h = new Handler();
         r = new Runnable(){
@@ -123,6 +125,19 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
     };
 
+    private BroadcastReceiver pMessageReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean playing = intent.getBooleanExtra("State", false);
+            if (playing) {
+                playPauseButton.setImageResource(R.drawable.ic_pausecircle);
+            }
+            else {
+                playPauseButton.setImageResource(R.drawable.ic_playcircle);
+            }
+        }
+    };
+
     private void initPlayer() {
         seek.setMax(Math.round(musicSrv.getLength()));
 
@@ -139,6 +154,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         String albumId = musicSrv.getAlbumId();
         albumView.setImageDrawable(ImageHelper.findAlbumArtById(albumId, getApplicationContext()));
     }
+
     private void updatePlayer() {
         if (musicBound) {
             if (!seekInteracting) {
@@ -152,6 +168,31 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_player, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case (R.id.action_settings):
+                break;
+            case (R.id.action_queue):
+                Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
+                intent.putExtra(STATE_QUEUE, musicSrv.getList());
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -172,16 +213,9 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
             ((ImageView)view).setImageResource(R.drawable.ic_playcircle);
         }
         else {
-            musicSrv.go();
+            musicSrv.goCheckFocus();
             ((ImageView)view).setImageResource(R.drawable.ic_pausecircle);
         }
-    }
-
-    public void openQueue(View view) {
-        Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
-        intent.putExtra(STATE_QUEUE, musicSrv.getList());
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @SuppressWarnings("UnusedParameters")

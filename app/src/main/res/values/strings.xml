@@ -36,7 +36,9 @@
     <string name="grid_mode">Grid View</string>
     <string name="list_mode">List View</string>
     <string name="switch_views">Switch Views</string>
+
     <string name="action_settings">Settings</string>
+    <string name="action_queue">Queue</string>
 
     <string name="title_activity_queue">Queue</string>
 

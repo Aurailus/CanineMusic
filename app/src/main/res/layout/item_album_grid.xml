@@ -36,21 +36,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_album_unknown"/>
 
-        <!--<ImageView
-            android:id="@+id/overflow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@mipmap/ic_overflow"
-            android:clickable="true"
-            android:contentDescription="Overflow"
-            android:cropToPadding="false"
-            android:elevation="0dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ripple_oval"
-            />-->
-
     </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/overflow"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="0dp"
+        android:background="@mipmap/ic_overflow"
+        android:clickable="true"
+        android:contentDescription="Overflow"
+        android:elevation="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ripple_oval" />
 
     <TextView
         android:id="@+id/album_title"
