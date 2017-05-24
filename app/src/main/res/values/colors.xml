@@ -5,4 +5,12 @@
     <color name="colorAccent">#FF4081</color>
     <color name="categoryColor">#777777</color>
     <color name="notificationDark">#333333</color>
+
+    <!--Ripple Colors-->
+    <color name="rippleLight">#AAFFFFFF</color>
+    <color name="rippleDark">#66000000</color>
+
+    <!--Legacy Highlight Colors-->
+    <color name="touchLight">#44FFFFFF</color>
+    <color name="touchDark">#33000000</color>
 </resources>

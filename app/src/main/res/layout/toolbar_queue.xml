@@ -28,8 +28,9 @@
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/ic_arrow_back"
+            app:srcCompat="@drawable/ic_arrow_back"
             android:contentDescription="@string/back"
             android:onClick="back"
             android:title="@string/back"
@@ -37,7 +38,7 @@
             app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ripple_oval_light"/>
+            android:background="@drawable/ripple_oval_light"/>
 
         <TextView
             android:id="@+id/textView"

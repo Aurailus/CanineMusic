@@ -1,5 +1,6 @@
 package com.aurailus.caninemusic;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -22,10 +23,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
+    private static final String STATE_QUEUE = "com.aurailus.caninemusic.QUEUE";
     private SeekBar seek;
     private TextView titleView;
     private TextView artistView;
@@ -99,7 +102,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
 
             if (!musicSrv.isPlaying()) {
                 if (musicSrv.isPrepared()) {
-                    playPauseButton.setBackgroundResource(R.drawable.ic_playcircle);
+                    playPauseButton.setImageResource(R.drawable.ic_playcircle);
                 }
             }
 
@@ -186,16 +189,17 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     public void togglePlaying(View view) {
         if (musicSrv.isPlaying()) {
             musicSrv.pausePlayer();
-            view.setBackgroundResource(R.drawable.ic_playcircle);
+            ((ImageView)view).setImageResource(R.drawable.ic_playcircle);
         }
         else {
             musicSrv.go();
-            view.setBackgroundResource(R.drawable.ic_pausecircle);
+            ((ImageView)view).setImageResource(R.drawable.ic_pausecircle);
         }
     }
 
     public void openQueue(View view) {
         Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
+        intent.putExtra(STATE_QUEUE, musicSrv.getList());
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
@@ -203,7 +207,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     @SuppressWarnings("UnusedParameters")
     public void nextSong(View view) {
         musicSrv.playNext();
-        playPauseButton.setBackgroundResource(R.drawable.ic_pausecircle);
+        playPauseButton.setImageResource(R.drawable.ic_pausecircle);
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -213,7 +217,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
         else {
             musicSrv.playPrev();
-            playPauseButton.setBackgroundResource(R.drawable.ic_pausecircle);
+            playPauseButton.setImageResource(R.drawable.ic_pausecircle);
         }
     }
 

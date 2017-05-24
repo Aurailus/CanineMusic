@@ -120,18 +120,21 @@ public class MusicService extends Service implements
             PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             builder.setContentIntent(pendInt)
-                    .setPriority(Notification.PRIORITY_MAX)
                     .setContentText(songTitle)
-                    .setSmallIcon(R.drawable.ic_play)
+                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setTicker(songTitle)
                     .setContentTitle("Playing " + songTitle);
 
             if (Build.VERSION.SDK_INT < 24) {
                 //noinspection deprecation
                 builder.setContent(view);
-            } else {
+            }
+            else {
                 builder.setCustomContentView(view);
                 builder.setCustomBigContentView(bigView);
+            }
+            if (Build.VERSION.SDK_INT >= 16) {
+                builder.setPriority(Notification.PRIORITY_MAX);
             }
 
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -193,9 +196,8 @@ public class MusicService extends Service implements
         }
 
         builder.setContentIntent(pendInt)
-                .setPriority(Notification.PRIORITY_MAX)
                 .setContentText(songTitle)
-                .setSmallIcon(R.drawable.ic_play)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker(songTitle)
                 .setContentTitle("Playing " + songTitle);
 
@@ -207,8 +209,13 @@ public class MusicService extends Service implements
             builder.setCustomContentView(view);
             builder.setCustomBigContentView(bigView);
         }
-
-        notification = builder.build();
+        if (Build.VERSION.SDK_INT >= 16) {
+            builder.setPriority(Notification.PRIORITY_MAX);
+            notification = builder.build();
+        }
+        else {
+            notification = builder.getNotification();
+        }
         startForeground(NOTIFY_ID, notification);
     }
 

@@ -22,6 +22,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="4dp"
             android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginTop="8dp"
             app:srcCompat="@drawable/ic_album_unknown" />
 
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
                 android:lines="1"
                 android:textSize="18sp"
                 android:text="@string/unknown_data"
@@ -50,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
                 android:lines="1"
                 android:text="@string/unknown_data"
                 android:textColor="#ffffff"

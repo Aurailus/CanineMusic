@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else {
             ViewFlipper flipper = (ViewFlipper)findViewById(R.id.flipper);
+            currentView = PageView.atPosition(savedInstanceState.getInt(STATE_VIEW));
             flipper.setDisplayedChild(savedInstanceState.getInt(STATE_VIEW));
 
             //Reconnect to MusicService
