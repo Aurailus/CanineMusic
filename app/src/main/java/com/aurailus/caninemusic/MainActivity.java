@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
@@ -279,26 +280,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mainArtist.setText(musicSrv.getArtist());
 
         ImageView albumView = (ImageView)findViewById(R.id.current_albumart);
-        String albumId = musicSrv.getAlbumId();
 
-        Bitmap roundedBmp;
-        Drawable albumArt = ImageHelper.findAlbumArtById(albumId, this.getBaseContext());
+        Drawable albumArt = ImageHelper.roundAlbumDrawable(ImageHelper.findAlbumArtById(musicSrv.getAlbumId(), getApplicationContext()));
         if (albumArt != null) {
             albumView.setImageDrawable(albumArt);
-
-            //Rounded Bitmap for Notification
-            roundedBmp = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(roundedBmp);
-            albumArt.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            albumArt.draw(canvas);
+            Bitmap albumBmp = Bitmap.createBitmap(albumArt.getIntrinsicWidth(), albumArt.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canv = new Canvas(albumBmp);
+            albumArt.setBounds(0,0,canv.getWidth(),canv.getHeight());
+            albumArt.draw(canv);
+            musicSrv.updateNotification(albumBmp);
         }
-        else {
-            albumView.setImageResource(R.drawable.ic_album_unknown);
-            roundedBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_album_unknown);
-        }
-
-        musicSrv.updateNotification(roundedBmp);
-
     }
 
     @Override

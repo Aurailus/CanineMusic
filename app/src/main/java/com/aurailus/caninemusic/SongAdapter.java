@@ -1,5 +1,6 @@
 package com.aurailus.caninemusic;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +66,9 @@ class SongAdapter extends BaseAdapter {
         for(Album curAlbum : albumart) {
             if (curAlbum.getId().equals(curSong.getAlbumId())) {
                 if (curAlbum.getImage() != null) {
-                    Drawable img = curAlbum.getImage();
-                    holder.albumArtView.setImageDrawable(img);
+
+                    Bitmap img = curAlbum.getImage();
+                    holder.albumArtView.setImageBitmap(img);
                     break;
                 }
                 else {

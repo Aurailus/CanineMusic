@@ -1,6 +1,7 @@
 package com.aurailus.caninemusic;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
@@ -46,8 +47,8 @@ class AlbumAdapter extends BaseAdapter {
         Album curAlbum = albums.get(ind);
         albumView.setText(curAlbum.getTitle());
         if (curAlbum.getImage() != null) {
-            Drawable img = curAlbum.getImage();
-            albumArtView.setImageDrawable(img);
+            Bitmap img = curAlbum.getImage();
+            albumArtView.setImageBitmap(img);
         }
 
         if (moredetails) {

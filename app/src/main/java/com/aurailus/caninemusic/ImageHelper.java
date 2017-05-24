@@ -5,12 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import java.io.File;
+import java.io.InputStream;
 
 class ImageHelper {
     public static Drawable findAlbumArtById(String id, Context context) {
@@ -32,20 +35,25 @@ class ImageHelper {
 
                     if (file.exists()) {
 
-                        Bitmap albumBmp = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(albumString), 128, 128, false);
-                        RoundedBitmapDrawable roundedArt = RoundedBitmapDrawableFactory.create(null, albumBmp);
+                        albumArt = Drawable.createFromPath(albumString);
 
-                        roundedArt.setCornerRadius(1000.0f);
-                        roundedArt.setAntiAlias(true);
-
-                        albumArt = roundedArt;
-                    } else return null;
-                } else return null;
-            } else return null;
+                    } else albumArt = null;
+                } else albumArt = null;
+            } else albumArt = null;
 
             albumCursor.close();
-        } else return null;
+        } else albumArt = null;
 
         return albumArt;
+    }
+
+    public static Drawable roundAlbumDrawable(Drawable drawable) {
+        if (drawable != null) {
+            RoundedBitmapDrawable roundedArt = RoundedBitmapDrawableFactory.create(null, ((BitmapDrawable)drawable).getBitmap());
+            roundedArt.setCornerRadius(1000.0f);
+            roundedArt.setAntiAlias(true);
+            return roundedArt;
+        }
+        else return null;
     }
 }

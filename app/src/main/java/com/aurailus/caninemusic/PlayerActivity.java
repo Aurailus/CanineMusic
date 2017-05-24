@@ -137,27 +137,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         artistView.setText(musicSrv.getArtist());
 
         String albumId = musicSrv.getAlbumId();
-        ContentResolver albumResolver = getContentResolver();
-        Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
-                new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},  //Columns to grab
-                MediaStore.Audio.Albums._ID+ "=?",                                              //Selection filter... question marks substitute 4th row args
-                new String[] {String.valueOf(albumId)},                                         //Args for filter
-                null);
-
-        if (albumCursor != null && albumCursor.moveToFirst()) {
-            String albumString = albumCursor.getString(albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ART));
-
-            if (albumString != null) {
-                File file = new File(albumString);
-
-                if (file.exists()) {
-                    Bitmap albumArt = Bitmap.createBitmap(BitmapFactory.decodeFile(albumString));
-                    albumView.setImageBitmap(albumArt);
-                }
-            }
-
-            albumCursor.close();
-        }
+        albumView.setImageDrawable(ImageHelper.findAlbumArtById(albumId, getApplicationContext()));
     }
     private void updatePlayer() {
         if (musicBound) {
