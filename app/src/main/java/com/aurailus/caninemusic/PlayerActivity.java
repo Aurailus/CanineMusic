@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -54,10 +55,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         lengthView = (TextView) findViewById(R.id.song_duration);
         albumView = (ImageView) findViewById(R.id.album_cover);
         playPauseButton = (ImageView) findViewById(R.id.button_playpause);
-
-        View actionBar = (View)findViewById(R.id.player_actionbar);
-        Palette
-        actionBar.setBackgroundColor(0x0033ff);
 
         seek.setOnSeekBarChangeListener(this);
 
@@ -152,7 +149,13 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         artistView.setText(musicSrv.getArtist());
 
         String albumId = musicSrv.getAlbumId();
-        albumView.setImageDrawable(ImageHelper.findAlbumArtById(albumId, getApplicationContext()));
+        Drawable img = ImageHelper.findAlbumArtById(albumId, getApplicationContext());
+        if (img != null) {
+            albumView.setImageDrawable(img);
+        }
+        else {
+            albumView.setImageResource(R.drawable.ic_album);
+        }
     }
 
     private void updatePlayer() {

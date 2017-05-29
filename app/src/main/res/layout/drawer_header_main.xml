@@ -22,6 +22,7 @@
         android:layout_marginBottom="6dp"
         app:srcCompat="@mipmap/ic_logo_hq"
         android:antialias="true"
+        android:paddingTop="25dp"
         android:contentDescription="@string/title_activity_main"/>
 
     <TextView

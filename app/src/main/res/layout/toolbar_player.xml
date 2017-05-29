@@ -21,7 +21,8 @@
         android:weightSum="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="25dp">
 
         <ImageView
             android:id="@+id/open_drawer"

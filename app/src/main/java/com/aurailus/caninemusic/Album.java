@@ -3,9 +3,7 @@ package com.aurailus.caninemusic;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 
 class Album {
     private String id;
@@ -34,6 +32,8 @@ class Album {
             Canvas canvas = new Canvas(albumArt);
             albumDraw.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             albumDraw.draw(canvas);
+
+            System.out.println();
         }
     }
 

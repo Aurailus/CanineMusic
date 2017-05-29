@@ -6,7 +6,8 @@
     android:background="?attr/colorPrimary"
     android:id="@+id/toolbar"
     android:elevation="4dp"
-    android:clipChildren="false">
+    android:clipChildren="false"
+    android:paddingTop="25dp">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_toolbar"
