@@ -25,7 +25,7 @@
         android:paddingTop="25dp">
 
         <ImageView
-            android:id="@+id/open_drawer"
+            android:id="@+id/back_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
@@ -48,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:maxLines="1"
@@ -57,9 +56,10 @@
             android:text="@string/unknown_data"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textSize="22sp"
-            app:layout_constraintLeft_toRightOf="@+id/open_drawer"
-            app:layout_constraintRight_toLeftOf="@+id/player_toolbar"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintLeft_toRightOf="@+id/back_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/queue_button"
+            android:layout_marginRight="8dp" />
 
         <TextView
             android:id="@+id/song_artist"
@@ -68,7 +68,6 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="4dp"
             android:maxLines="1"
             android:minLines="1"
@@ -76,24 +75,32 @@
             android:text="@string/unknown_data"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/open_drawer"
-            app:layout_constraintRight_toLeftOf="@+id/player_toolbar"
+            app:layout_constraintLeft_toRightOf="@+id/back_button"
             app:layout_constraintTop_toBottomOf="@+id/song_title"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintRight_toLeftOf="@+id/queue_button"
+            android:layout_marginRight="8dp" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/player_toolbar"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/queue_button"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/ripple_oval_light"
+            android:contentDescription="@string/back"
+            android:onClick="openQueue"
+            android:scaleType="fitXY"
+            android:title="@string/action_queue"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_hamburger" />
 
     </android.support.constraint.ConstraintLayout>
 

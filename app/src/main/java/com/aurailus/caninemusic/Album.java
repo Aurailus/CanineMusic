@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
+import com.aurailus.caninemusic.PaletteGrabber.Palette;
+
 class Album {
     private String id;
     private String title;
@@ -32,8 +34,6 @@ class Album {
             Canvas canvas = new Canvas(albumArt);
             albumDraw.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             albumDraw.draw(canvas);
-
-            System.out.println();
         }
     }
 

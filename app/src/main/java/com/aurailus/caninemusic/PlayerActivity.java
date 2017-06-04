@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +23,11 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.aurailus.caninemusic.PaletteGrabber.Palette;
+
 import java.util.Locale;
+
+import static java.lang.Math.abs;
 
 public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
@@ -44,9 +51,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.player_toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
 
         seek = (SeekBar) findViewById(R.id.song_seekbar);
         titleView = (TextView) findViewById(R.id.song_title);
@@ -90,112 +94,140 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
 
    private ServiceConnection musicConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            musicSrv = binder.getService();
-            musicBound = true;
-
-            initPlayer();
-            updatePlayer();
-
-            if (!musicSrv.isPlaying()) {
-                if (musicSrv.isPrepared()) {
-                    playPauseButton.setImageResource(R.drawable.ic_playcircle);
-                }
-            }
-
-            updateDelay = 250;
-            h.postDelayed(r, updateDelay);
-        }
-
     @Override
-    public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+        musicSrv = binder.getService();
+        musicBound = true;
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            initPlayer();
-        }
-    };
+        initPlayer();
+        updatePlayer();
 
-    private BroadcastReceiver pMessageReciever = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            boolean playing = intent.getBooleanExtra("State", false);
-            if (playing) {
-                playPauseButton.setImageResource(R.drawable.ic_pausecircle);
-            }
-            else {
+        if (!musicSrv.isPlaying()) {
+            if (musicSrv.isPrepared()) {
                 playPauseButton.setImageResource(R.drawable.ic_playcircle);
             }
         }
+
+        updateDelay = 250;
+        h.postDelayed(r, updateDelay);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        musicBound = false;
+    }
+    };
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        initPlayer();
+    }
+    };
+
+    private BroadcastReceiver pMessageReciever = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        boolean playing = intent.getBooleanExtra("State", false);
+        if (playing) {
+            playPauseButton.setImageResource(R.drawable.ic_pausecircle);
+        }
+        else {
+            playPauseButton.setImageResource(R.drawable.ic_playcircle);
+        }
+    }
     };
 
     private void initPlayer() {
-        seek.setMax(Math.round(musicSrv.getLength()));
+    seek.setMax(Math.round(musicSrv.getLength()));
 
-        int x = musicSrv.getLength() / 1000;
-        int seconds = x % 60;
-        x /= 60;
-        int minutes = x % 60;
+    int x = musicSrv.getLength() / 1000;
+    int seconds = x % 60;
+    x /= 60;
+    int minutes = x % 60;
 
-        lengthView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
+    lengthView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
 
-        titleView.setText(musicSrv.getTitle());
-        artistView.setText(musicSrv.getArtist());
+    titleView.setText(musicSrv.getTitle());
+    artistView.setText(musicSrv.getArtist());
 
-        String albumId = musicSrv.getAlbumId();
-        Drawable img = ImageHelper.findAlbumArtById(albumId, getApplicationContext());
-        if (img != null) {
-            albumView.setImageDrawable(img);
+    String albumId = musicSrv.getAlbumId();
+    Drawable img = ImageHelper.findAlbumArtById(albumId, getApplicationContext());
+    if (img != null) {
+        albumView.setImageDrawable(img);
+    }
+    else {
+        albumView.setImageResource(R.drawable.ic_album);
+    }
+
+    Bitmap albumArt = BitmapFactory.decodeFile(ImageHelper.findAlbumPathById(albumId, getApplicationContext()));
+    Palette colorPalette = new Palette(albumArt);
+    short[] colVals = colorPalette.getColour();
+    short[] oriVals = colVals;
+
+    System.out.println("Set color");
+    if (colVals[0] != -1) {
+        short attp = 0;
+        while ((abs(colVals[0] - colVals[1]) < 30) &&
+                (abs(colVals[0] - colVals[2]) < 30) &&
+                (abs(colVals[1] - colVals[2]) < 30) && attp < 5) {
+            colVals = colorPalette.getColour();
+            attp++;
+            System.out.println("Color next attempt");
         }
-        else {
-            albumView.setImageResource(R.drawable.ic_album);
+        if (attp == 5) {
+            colVals = oriVals;
         }
+
+        int r = (Math.max(colVals[0] - 20, 0) << 16) & 0x00FF0000;
+        int g = (Math.max(colVals[1] - 20, 0) << 8) & 0x0000FF00;
+        int b = (Math.max(colVals[2] - 20, 0)) & 0x000000FF;
+
+        int themeColor = 0xFF000000 | r | g | b;
+        findViewById(R.id.player_actionbar).setBackgroundColor(themeColor);
+    }
+    else {
+        findViewById(R.id.player_actionbar).setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
+    }
+    if (findEuclideanDist(colVals[0], colVals[1], colVals[2], 0, 0, 0) > 340) {
+        titleView.setTextColor(0xff000000);
+        artistView.setTextColor(0xff000000);
+        ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xff000000);
+        ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xff000000);
+        findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval);
+        findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval);
+    }
+    else {
+        titleView.setTextColor(0xffffffff);
+        artistView.setTextColor(0xffffffff);
+        ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xffffffff);
+        ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xffffffff);
+        findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval_light);
+        findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval_light);
+    }
     }
 
     private void updatePlayer() {
-        if (musicBound) {
-            if (!seekInteracting) {
-                seek.setProgress(Math.round(musicSrv.getTime()));
+    if (musicBound) {
+        if (!seekInteracting) {
+            seek.setProgress(Math.round(musicSrv.getTime()));
 
-                int x = musicSrv.getTime() / 1000;
-                int seconds = x % 60;
-                x /= 60;
-                int minutes = x % 60;
+            int x = musicSrv.getTime() / 1000;
+            int seconds = x % 60;
+            x /= 60;
+            int minutes = x % 60;
 
-                timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
-            }
+            timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_player, menu);
-        return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case (R.id.action_settings):
-                break;
-            case (R.id.action_queue):
-                Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
-                intent.putExtra(STATE_QUEUE, musicSrv.getList());
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                break;
-            default:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void openQueue(View view) {
+        Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
+        intent.putExtra(STATE_QUEUE, musicSrv.getList());
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @Override
@@ -258,5 +290,13 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     public void onStopTrackingTouch(SeekBar seek) {
         musicSrv.seek(seek.getProgress());
         seekInteracting = false;
+    }
+
+    double findEuclideanDist(int x1, int y1, int z1, int x2, int y2, int z2) {
+        double sum = 0.0;
+        sum += Math.pow(x1 - x2, 2.0);
+        sum += Math.pow(y1 - y2, 2.0);
+        sum += Math.pow(z1 - z2, 2.0);
+        return Math.sqrt(sum);
     }
 }

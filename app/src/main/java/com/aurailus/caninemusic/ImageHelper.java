@@ -47,6 +47,28 @@ class ImageHelper {
         return albumArt;
     }
 
+    public static String findAlbumPathById(String id, Context context) {
+        String albumString;
+
+        ContentResolver albumResolver = context.getContentResolver();
+        Cursor albumCursor = albumResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,  //Location to grab from
+                new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},   //Columns to grab
+                MediaStore.Audio.Albums._ID + "=?",                                             //Selection filter... question marks substitute 4th row args
+                new String[]{id},                                                               //Args for filter
+                null);
+
+        if (albumCursor != null) {
+            if (albumCursor.moveToFirst()) {
+                albumString = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+
+            } else albumString = null;
+
+            albumCursor.close();
+        } else albumString = null;
+
+        return albumString;
+    }
+
     public static Drawable roundAlbumDrawable(Drawable drawable) {
         if (drawable != null) {
             RoundedBitmapDrawable roundedArt = RoundedBitmapDrawableFactory.create(null, ((BitmapDrawable)drawable).getBitmap());
