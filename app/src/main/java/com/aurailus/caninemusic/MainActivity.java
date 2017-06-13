@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -27,9 +28,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.net.Uri;
@@ -267,8 +270,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     };
 
     private void setToolbarContent() {
-        TextView appTitle = (TextView)findViewById(R.id.app_title);
-        ConstraintLayout songDetails = (ConstraintLayout)findViewById(R.id.playing_details);
+        View appTitle = (TextView)findViewById(R.id.app_title);
+        View songDetails = findViewById(R.id.playing_details);
 
         //Hide the app title and start displaying item_song info
         if (appTitle.getVisibility() == View.VISIBLE) {
@@ -276,8 +279,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             songDetails.setVisibility(View.VISIBLE);
         }
 
-        TextView mainTitle = (TextView)findViewById(R.id.current_title);
-        TextView mainArtist = (TextView)findViewById(R.id.current_artist);
+        TextView mainTitle = (TextView)songDetails.findViewById(R.id.current_title);
+        TextView mainArtist = (TextView)songDetails.findViewById(R.id.current_artist);
 
         mainTitle.setText(musicSrv.getTitle());
         mainArtist.setText(musicSrv.getArtist());

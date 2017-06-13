@@ -140,72 +140,72 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     };
 
     private void initPlayer() {
-    seek.setMax(Math.round(musicSrv.getLength()));
+        seek.setMax(Math.round(musicSrv.getLength()));
 
-    int x = musicSrv.getLength() / 1000;
-    int seconds = x % 60;
-    x /= 60;
-    int minutes = x % 60;
+        int x = musicSrv.getLength() / 1000;
+        int seconds = x % 60;
+        x /= 60;
+        int minutes = x % 60;
 
-    lengthView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
+        lengthView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
 
-    titleView.setText(musicSrv.getTitle());
-    artistView.setText(musicSrv.getArtist());
+        titleView.setText(musicSrv.getTitle());
+        artistView.setText(musicSrv.getArtist());
 
-    String albumId = musicSrv.getAlbumId();
-    Drawable img = ImageHelper.findAlbumArtById(albumId, getApplicationContext());
-    if (img != null) {
-        albumView.setImageDrawable(img);
-    }
-    else {
-        albumView.setImageResource(R.drawable.ic_album);
-    }
-
-    Bitmap albumArt = BitmapFactory.decodeFile(ImageHelper.findAlbumPathById(albumId, getApplicationContext()));
-    Palette colorPalette = new Palette(albumArt);
-    short[] colVals = colorPalette.getColour();
-    short[] oriVals = colVals;
-
-    System.out.println("Set color");
-    if (colVals[0] != -1) {
-        short attp = 0;
-        while ((abs(colVals[0] - colVals[1]) < 30) &&
-                (abs(colVals[0] - colVals[2]) < 30) &&
-                (abs(colVals[1] - colVals[2]) < 30) && attp < 5) {
-            colVals = colorPalette.getColour();
-            attp++;
-            System.out.println("Color next attempt");
+        String albumId = musicSrv.getAlbumId();
+        Drawable img = ImageHelper.findAlbumArtById(albumId, getApplicationContext());
+        if (img != null) {
+            albumView.setImageDrawable(img);
         }
-        if (attp == 5) {
-            colVals = oriVals;
+        else {
+            albumView.setImageResource(R.drawable.ic_album);
         }
 
-        int r = (Math.max(colVals[0] - 20, 0) << 16) & 0x00FF0000;
-        int g = (Math.max(colVals[1] - 20, 0) << 8) & 0x0000FF00;
-        int b = (Math.max(colVals[2] - 20, 0)) & 0x000000FF;
+        Bitmap albumArt = BitmapFactory.decodeFile(ImageHelper.findAlbumPathById(albumId, getApplicationContext()));
+        Palette colorPalette = new Palette(albumArt);
+        short[] colVals = colorPalette.getColour();
+        short[] oriVals = colVals;
 
-        int themeColor = 0xFF000000 | r | g | b;
-        findViewById(R.id.player_actionbar).setBackgroundColor(themeColor);
-    }
-    else {
-        findViewById(R.id.player_actionbar).setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
-    }
-    if (findEuclideanDist(colVals[0], colVals[1], colVals[2], 0, 0, 0) > 340) {
-        titleView.setTextColor(0xff000000);
-        artistView.setTextColor(0xff000000);
-        ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xff000000);
-        ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xff000000);
-        findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval);
-        findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval);
-    }
-    else {
-        titleView.setTextColor(0xffffffff);
-        artistView.setTextColor(0xffffffff);
-        ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xffffffff);
-        ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xffffffff);
-        findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval_light);
-        findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval_light);
-    }
+        System.out.println("Set color");
+        if (colVals[0] != -1) {
+            short attp = 0;
+            while ((abs(colVals[0] - colVals[1]) < 30) &&
+                    (abs(colVals[0] - colVals[2]) < 30) &&
+                    (abs(colVals[1] - colVals[2]) < 30) && attp < 5) {
+                colVals = colorPalette.getColour();
+                attp++;
+                System.out.println("Color next attempt");
+            }
+            if (attp == 5) {
+                colVals = oriVals;
+            }
+
+            int r = (Math.max(colVals[0] - 20, 0) << 16) & 0x00FF0000;
+            int g = (Math.max(colVals[1] - 20, 0) << 8) & 0x0000FF00;
+            int b = (Math.max(colVals[2] - 20, 0)) & 0x000000FF;
+
+            int themeColor = 0xFF000000 | r | g | b;
+            findViewById(R.id.player_actionbar).setBackgroundColor(themeColor);
+        }
+        else {
+            findViewById(R.id.player_actionbar).setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
+        }
+        if (findEuclideanDist(colVals[0], colVals[1], colVals[2], 0, 0, 0) > 340) {
+            titleView.setTextColor(0xff000000);
+            artistView.setTextColor(0xff000000);
+            ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xff000000);
+            ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xff000000);
+            findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval);
+            findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval);
+        }
+        else {
+            titleView.setTextColor(0xffffffff);
+            artistView.setTextColor(0xffffffff);
+            ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xffffffff);
+            ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xffffffff);
+            findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval_light);
+            findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval_light);
+        }
     }
 
     private void updatePlayer() {

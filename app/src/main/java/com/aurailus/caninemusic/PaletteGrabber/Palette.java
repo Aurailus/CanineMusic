@@ -49,6 +49,7 @@ public class Palette {
   }
 
   public short[] getColour(){
+    long startTime = System.nanoTime()/1000000;
     final int THRESH = 50; //defines the maximum difference in pixel values the program will detect
 
     ArrayList<Pixel> record = new ArrayList<>(); //set up a temporary record to hold similar pixels
@@ -88,11 +89,17 @@ public class Palette {
         }
         //freqResult = av; //debug
         //System.out.println(freqResult); //debug
+
+        long estimatedTime = (System.nanoTime() - startTime)/1000000;
+        System.out.println("Palette Check Time Elapsed = " + estimatedTime);
         return avPix; //send out the picked colour
     }
     else {
         short[] avPix = new short[3];
         Arrays.fill(avPix, (short)-1);
+
+        long estimatedTime = (System.nanoTime() - startTime)/1000000;
+        System.out.println("Color find time >" + estimatedTime + "\n--------");
         return avPix;
     }
   }

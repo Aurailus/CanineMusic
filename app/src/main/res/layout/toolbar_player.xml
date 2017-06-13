@@ -1,107 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:elevation="5dp"
-    android:id="@+id/layout">
+    android:minHeight="?attr/actionBarSize"
+    android:id="@+id/player_actionbar"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:background="?attr/colorPrimary"
+    android:fitsSystemWindows="true"
+    android:elevation="4dp">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/player_actionbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:elevation="4dp"
+    <LinearLayout
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="0dp"
         android:minHeight="?attr/actionBarSize"
-        android:weightSum="1"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingTop="25dp">
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/ripple_oval_light"
-            android:contentDescription="@string/back"
-            android:onClick="back"
-            android:title="@string/back"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="w,1:1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_back" />
-
-        <TextView
-            android:id="@+id/song_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
-            android:maxLines="1"
-            android:minLines="1"
-            android:textColor="#fff"
-            android:text="@string/unknown_data"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textSize="22sp"
-            app:layout_constraintLeft_toRightOf="@+id/back_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/queue_button"
-            android:layout_marginRight="8dp" />
+            android:adjustViewBounds="true"
+            android:background="@drawable/ripple_oval_light"
+            android:contentDescription="@string/back"
+            android:onClick="back"
+            android:scaleType="fitCenter"
+            android:title="@string/back"
+            app:srcCompat="@drawable/ic_arrow_back" />
 
-        <TextView
-            android:id="@+id/song_artist"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:maxLines="1"
-            android:minLines="1"
-            android:textColor="#fff"
-            android:text="@string/unknown_data"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/back_button"
-            app:layout_constraintTop_toBottomOf="@+id/song_title"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintRight_toLeftOf="@+id/queue_button"
-            android:layout_marginRight="8dp" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingBottom="2dp"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/song_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="4dp"
+                android:maxLines="1"
+                android:minLines="1"
+                android:text="@string/unknown_data"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/song_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="4dp"
+                android:maxLines="1"
+                android:minLines="1"
+                android:text="@string/unknown_data"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="#fff"/>
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/queue_button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="true"
             android:background="@drawable/ripple_oval_light"
             android:contentDescription="@string/back"
+            android:padding="6dp"
             android:onClick="openQueue"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:title="@string/action_queue"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="w,1:1"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_hamburger" />
 
-    </android.support.constraint.ConstraintLayout>
-
-</LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
