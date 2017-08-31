@@ -43,7 +43,7 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-1dp"
+        android:layout_marginBottom="2dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
         android:background="?android:attr/colorBackground"
@@ -103,7 +103,7 @@
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1:1"
-            app:layout_constraintRight_toLeftOf="@+id/button_playpause"
+            app:layout_constraintRight_toLeftOf="@+id/playpause_frame"
             android:background="@drawable/ripple_oval"
             app:layout_constraintLeft_toRightOf="@+id/button_shuffle"/>
 
@@ -122,28 +122,35 @@
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1:1"
-            app:layout_constraintLeft_toRightOf="@+id/button_playpause"
+            app:layout_constraintLeft_toRightOf="@+id/playpause_frame"
             android:background="@drawable/ripple_oval"
             app:layout_constraintRight_toLeftOf="@+id/button_repeat"/>
 
-        <ImageView
-            android:id="@+id/button_playpause"
+        <FrameLayout
+            android:id="@+id/playpause_frame"
             android:layout_width="76dp"
             android:layout_height="76dp"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            app:srcCompat="@drawable/ic_pausecircle"
             android:clickable="true"
-            android:contentDescription="@string/play_pause"
-            android:elevation="4dp"
             android:onClick="togglePlaying"
-            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:background="@drawable/ripple_oval_light" />
+            android:background="@drawable/ic_pausecircle" >
+
+            <ImageView
+                android:id="@+id/button_playpause"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/play_pause"
+                android:background="@drawable/ripple_oval_light"
+                app:layout_constraintDimensionRatio="w,1:1"/>
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/current_time"
@@ -168,7 +175,7 @@
             android:layout_marginTop="4dp"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/button_playpause"
+            app:layout_constraintBottom_toTopOf="@+id/playpause_frame"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toRightOf="@+id/current_time"
             app:layout_constraintRight_toLeftOf="@+id/song_duration"

@@ -17,7 +17,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -38,11 +40,13 @@ import android.widget.ListView;
 import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -81,27 +85,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-        //Initialize ArrayLists
+        //Initialize Songs
         songList = new ArrayList<>();
         playList = new ArrayList<>();
-        findSongs();
-
-        //Get Songs
-        Collections.sort(songList, new Comparator<Song>() {
-            public int compare(Song a, Song b) {
-                return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
-            }
-        });
 
         //Initialize Albums
         albumList = new ArrayList<>();
         findAlbums();
-        Collections.sort(albumList, new Comparator<Album>() {
-            public int compare(Album a, Album b) {
-                return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
-            }
-        });
-
         initializePlaylist(savedInstanceState);
 
         if (savedInstanceState == null) {
@@ -133,22 +123,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("musicPrepared"));
 
         /*View functions*/
-        ListView songView = (ListView)findViewById(R.id.song_list);
-        SongAdapter songAdt = new SongAdapter(this, songList);
-        songView.setAdapter(songAdt);
-
-        ExpandableHeightGridView albumGridView = (ExpandableHeightGridView) findViewById(R.id.album_grid);
-        AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
-        albumGridView.setAdapter(albumAdt);
-        albumGridView.expand();
-        albumGridView.setFocusable(false);
-
-        ExpandableHeightListView albumListView = (ExpandableHeightListView) findViewById(R.id.album_list);
-        albumAdt = new AlbumAdapter(this, albumList, true);
-        albumListView.setAdapter(albumAdt);
-        albumListView.expand();
-        albumListView.setFocusable(false);
-
         albumSwitcher = (ViewSwitcher)findViewById(R.id.album_switcher);
 
         //Navigation
@@ -313,63 +287,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void findSongs() {
-        ContentResolver musicResolver = getContentResolver();
-        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        System.out.println("started asynctask songlist");
+        new SongFinder().execute(this);
+    }
 
-        if (musicCursor != null && musicCursor.moveToFirst()) {
-            int idList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media._ID);
-            int titleList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE);
-            int artistList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST);
-            int albumList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ALBUM_ID);
-            int durationList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DURATION);
+    void setSongList(ArrayList<Song> songs) {
+        songList.addAll(songs);
 
-            boolean next = true;
-            while (next) {
-                long thisId = musicCursor.getLong(idList);
-                String thisTitle = musicCursor.getString(titleList);
-                String thisArtist = musicCursor.getString(artistList);
-                String albumId = musicCursor.getString(albumList);
-                long thisDuration = musicCursor.getLong(durationList);
+        findViewById(R.id.song_loader).setVisibility(View.GONE);
 
-                songList.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration));
-                next = musicCursor.moveToNext();
+        Collections.sort(songList, new Comparator<Song>() {
+            public int compare(Song a, Song b) {
+                return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
             }
-            musicCursor.close();
-        }
+        });
+
+        ListView songView = (ListView)findViewById(R.id.song_list);
+        SongAdapter songAdt = new SongAdapter(this, songList);
+        songView.setAdapter(songAdt);
+
+        System.out.println("added songlist");
     }
 
     private void findAlbums() {
-        ContentResolver albumResolver = getContentResolver();
-        Uri albumUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[]columns = {android.provider.MediaStore.Audio.Albums._ID, android.provider.MediaStore.Audio.Albums.ALBUM_ID,
-                android.provider.MediaStore.Audio.Albums.ALBUM, android.provider.MediaStore.Audio.Albums.ARTIST};
+        System.out.println("started asynctask albumlist");
+        new AlbumFinder().execute(this);
+    }
 
-        Cursor albumCursor = albumResolver.query(albumUri, columns, null, null, null);
+    void setAlbumList(ArrayList<Album> albums) {
+        albumList.addAll(albums);
 
-        if (albumCursor != null && albumCursor.moveToFirst()) {
-            int titleList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM);
-            int albumIdList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ID);
-            int artistList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ARTIST);
+        findViewById(R.id.album_loader).setVisibility(View.GONE);
 
-            boolean next = true;
-            while (next) {
-                String albumId = albumCursor.getString(albumIdList);
-                String thisTitle = albumCursor.getString(titleList);
-                String thisArtist = albumCursor.getString(artistList);
-
-                boolean exists = false;
-                for (Album album : albumList) {
-                    if (album.getId().equals(albumId)) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists) albumList.add(new Album(albumId, thisTitle, thisArtist, this.getBaseContext()));
-                next = albumCursor.moveToNext();
+        Collections.sort(albumList, new Comparator<Album>() {
+            public int compare(Album a, Album b) {
+                return a.getTitle().toLowerCase().compareTo(b.getTitle().toLowerCase());
             }
-            albumCursor.close();
-        }
+        });
+
+        ExpandableHeightGridView albumGridView = (ExpandableHeightGridView) findViewById(R.id.album_grid);
+        AlbumAdapter albumAdt = new AlbumAdapter(this, albumList, false);
+        albumGridView.setAdapter(albumAdt);
+        albumGridView.expand();
+        albumGridView.setFocusable(false);
+
+        ExpandableHeightListView albumListView = (ExpandableHeightListView) findViewById(R.id.album_list);
+        albumAdt = new AlbumAdapter(this, albumList, true);
+        albumListView.setAdapter(albumAdt);
+        albumListView.expand();
+        albumListView.setFocusable(false);
+
+        System.out.println("added albums");
+
+        findSongs();
     }
 
     //TODO: Find out why this method cant play FLAC files but the ones in MusicService can
@@ -494,5 +464,96 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_down_in, R.anim.slide_down_out);
+    }
+}
+class SongFinder extends AsyncTask<MainActivity, Integer, ArrayList<Song>> {
+    private ArrayList<Song> songs;
+    private MainActivity parent;
+
+    protected void onPreExecute() {
+        System.out.println("Starting songfinding task...");
+        songs = new ArrayList<>();
+    }
+    protected ArrayList<Song> doInBackground(MainActivity... parent) {
+        this.parent = parent[0];
+        ContentResolver musicResolver = this.parent.getContentResolver();
+        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            int idList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media._ID);
+            int titleList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE);
+            int artistList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST);
+            int albumList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ALBUM_ID);
+            int durationList = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DURATION);
+
+            boolean next = true;
+            while (next) {
+                long thisId = musicCursor.getLong(idList);
+                String thisTitle = musicCursor.getString(titleList);
+                String thisArtist = musicCursor.getString(artistList);
+                String albumId = musicCursor.getString(albumList);
+                long thisDuration = musicCursor.getLong(durationList);
+
+                songs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration));
+                next = musicCursor.moveToNext();
+            }
+            musicCursor.close();
+        }
+        System.out.println("finished finding songlist");
+        return songs;
+    }
+
+    protected void onPostExecute(ArrayList<Song> s) {
+        System.out.println("setting song list");
+        parent.setSongList(s);
+    }
+}
+class AlbumFinder extends AsyncTask<MainActivity, Integer, ArrayList<Album>> {
+    private ArrayList<Album> albums;
+    private MainActivity parent;
+
+    protected void onPreExecute() {
+        System.out.println("Starting albumfinding task...");
+        albums = new ArrayList<>();
+    }
+    protected ArrayList<Album> doInBackground(MainActivity... parent) {
+        this.parent = parent[0];
+        ContentResolver albumResolver = this.parent.getContentResolver();
+        Uri albumUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[]columns = {android.provider.MediaStore.Audio.Albums._ID, android.provider.MediaStore.Audio.Albums.ALBUM_ID,
+                android.provider.MediaStore.Audio.Albums.ALBUM, android.provider.MediaStore.Audio.Albums.ARTIST};
+
+        Cursor albumCursor = albumResolver.query(albumUri, columns, null, null, null);
+
+        if (albumCursor != null && albumCursor.moveToFirst()) {
+            int titleList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM);
+            int albumIdList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ALBUM_ID);
+            int artistList = albumCursor.getColumnIndex(android.provider.MediaStore.Audio.Albums.ARTIST);
+
+            boolean next = true;
+            while (next) {
+                String albumId = albumCursor.getString(albumIdList);
+                String thisTitle = albumCursor.getString(titleList);
+                String thisArtist = albumCursor.getString(artistList);
+
+                boolean exists = false;
+                for (Album album : albums) {
+                    if (album.getId().equals(albumId)) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) albums.add(new Album(albumId, thisTitle, thisArtist, this.parent.getBaseContext()));
+                next = albumCursor.moveToNext();
+            }
+            albumCursor.close();
+        }
+        return albums;
+    }
+
+    protected void onPostExecute(ArrayList<Album> a) {
+        System.out.println("setting album list");
+        parent.setAlbumList(a);
     }
 }

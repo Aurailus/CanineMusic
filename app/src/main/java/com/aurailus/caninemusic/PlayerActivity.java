@@ -43,7 +43,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private MusicService musicSrv;
     private boolean musicBound = false;
     private Intent playIntent;
-    private Handler h;
+    static private Handler h;
     private Runnable r;
     private int updateDelay;
 
@@ -78,6 +78,9 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 h.postDelayed(this, updateDelay);
             }
         };
+
+        SeekUpdater seekThread = new SeekUpdater();
+        seekThread.start();
     }
 
     @Override
@@ -92,7 +95,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
     }
 
-   private ServiceConnection musicConnection = new ServiceConnection() {
+    private ServiceConnection musicConnection = new ServiceConnection() {
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -105,12 +108,13 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
 
         if (!musicSrv.isPlaying()) {
             if (musicSrv.isPrepared()) {
-                playPauseButton.setImageResource(R.drawable.ic_playcircle);
+                findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_playcircle);
             }
         }
 
-        updateDelay = 250;
+        updateDelay = 150;
         h.postDelayed(r, updateDelay);
+        System.out.println("Updaterunnable called");
     }
 
     @Override
@@ -131,10 +135,10 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     public void onReceive(Context context, Intent intent) {
         boolean playing = intent.getBooleanExtra("State", false);
         if (playing) {
-            playPauseButton.setImageResource(R.drawable.ic_pausecircle);
+            findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_pausecircle);
         }
         else {
-            playPauseButton.setImageResource(R.drawable.ic_playcircle);
+            findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_playcircle);
         }
     }
     };
@@ -154,73 +158,99 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
 
         String albumId = musicSrv.getAlbumId();
         Drawable img = ImageHelper.findAlbumArtById(albumId, getApplicationContext());
+        int toolbarColor;
+
         if (img != null) {
             albumView.setImageDrawable(img);
+            Bitmap albumArt = BitmapFactory.decodeFile(ImageHelper.findAlbumPathById(albumId, getApplicationContext()));
+            Palette colorPalette = new Palette(albumArt);
+            short[] colVals = colorPalette.getColour();
+            short[] oriVals = colVals;
+
+            System.out.println("Setting color");
+            if (colVals[0] != -1) {
+                short attp = 0;
+                while ((abs(colVals[0] - colVals[1]) < 30) &&
+                        (abs(colVals[0] - colVals[2]) < 30) &&
+                        (abs(colVals[1] - colVals[2]) < 30) && attp < 5) {
+                    colVals = colorPalette.getColour();
+                    attp++;
+                }
+                if (attp == 5) {
+                    System.out.println("Choosing fallback color");
+                    colVals = oriVals;
+                }
+
+                int r = (Math.max(colVals[0] - 20, 0) << 16) & 0x00FF0000;
+                int g = (Math.max(colVals[1] - 20, 0) << 8) & 0x0000FF00;
+                int b = (Math.max(colVals[2] - 20, 0)) & 0x000000FF;
+
+                toolbarColor = 0xFF000000 | r | g | b; //set toolbar color to the found color
+
+                System.out.println("color values > " + colVals[0] + " " + colVals[1] + " " + colVals[2] + " > " + (0.2126 * colVals[0] + 0.7152 * colVals[1] + 0.0722 * colVals[2]));
+                /*Get luma of color and set UI theme accordingly*/
+                if (0.2126 * colVals[0] + 0.7152 * colVals[1] + 0.0722 * colVals[2] > 200) {
+                    setUITheme("dark");
+                }
+                else {
+                    setUITheme("light");
+                }
+            }
+            else {
+                System.out.println("Couldn't read image, this should NOT happen");
+                toolbarColor = ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary);
+                setUITheme("light");
+            }
         }
         else {
+            System.out.println("Couldn't find image, choosing default color, this CAN happen");
             albumView.setImageResource(R.drawable.ic_album);
+            toolbarColor = ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary);
+            setUITheme("light");
         }
 
-        Bitmap albumArt = BitmapFactory.decodeFile(ImageHelper.findAlbumPathById(albumId, getApplicationContext()));
-        Palette colorPalette = new Palette(albumArt);
-        short[] colVals = colorPalette.getColour();
-        short[] oriVals = colVals;
+        findViewById(R.id.player_actionbar).setBackgroundColor(toolbarColor);
 
-        System.out.println("Set color");
-        if (colVals[0] != -1) {
-            short attp = 0;
-            while ((abs(colVals[0] - colVals[1]) < 30) &&
-                    (abs(colVals[0] - colVals[2]) < 30) &&
-                    (abs(colVals[1] - colVals[2]) < 30) && attp < 5) {
-                colVals = colorPalette.getColour();
-                attp++;
-                System.out.println("Color next attempt");
+        updatePlayer();
+    }
+
+    private void setUITheme(String theme) {
+        switch (theme) {
+            case ("dark"): {
+                titleView.setTextColor(0xff000000);
+                artistView.setTextColor(0xff000000);
+                ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xff000000);
+                ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xff000000);
+                findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval);
+                findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval);
+                break;
             }
-            if (attp == 5) {
-                colVals = oriVals;
+            case ("light"): default: {
+                titleView.setTextColor(0xffffffff);
+                artistView.setTextColor(0xffffffff);
+                ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xffffffff);
+                ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xffffffff);
+                findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval_light);
+                findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval_light);
+                break;
             }
-
-            int r = (Math.max(colVals[0] - 20, 0) << 16) & 0x00FF0000;
-            int g = (Math.max(colVals[1] - 20, 0) << 8) & 0x0000FF00;
-            int b = (Math.max(colVals[2] - 20, 0)) & 0x000000FF;
-
-            int themeColor = 0xFF000000 | r | g | b;
-            findViewById(R.id.player_actionbar).setBackgroundColor(themeColor);
-        }
-        else {
-            findViewById(R.id.player_actionbar).setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary));
-        }
-        if (findEuclideanDist(colVals[0], colVals[1], colVals[2], 0, 0, 0) > 340) {
-            titleView.setTextColor(0xff000000);
-            artistView.setTextColor(0xff000000);
-            ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xff000000);
-            ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xff000000);
-            findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval);
-            findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval);
-        }
-        else {
-            titleView.setTextColor(0xffffffff);
-            artistView.setTextColor(0xffffffff);
-            ((ImageView)findViewById(R.id.back_button)).setColorFilter(0xffffffff);
-            ((ImageView)findViewById(R.id.queue_button)).setColorFilter(0xffffffff);
-            findViewById(R.id.back_button).setBackgroundResource(R.drawable.ripple_oval_light);
-            findViewById(R.id.queue_button).setBackgroundResource(R.drawable.ripple_oval_light);
         }
     }
 
     private void updatePlayer() {
-    if (musicBound) {
-        if (!seekInteracting) {
-            seek.setProgress(Math.round(musicSrv.getTime()));
+        if (musicBound) {
+            if (!seekInteracting) {
+                seek.setProgress(Math.round(musicSrv.getTime()));
 
-            int x = musicSrv.getTime() / 1000;
-            int seconds = x % 60;
-            x /= 60;
-            int minutes = x % 60;
+                int x = musicSrv.getTime() / 1000;
+                int seconds = x % 60;
+                x /= 60;
+                int minutes = x % 60;
 
-            timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
+                timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
+            }
         }
-    }
+        System.out.println("Update player ending");
     }
 
     public void openQueue(View view) {
@@ -245,18 +275,18 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     public void togglePlaying(View view) {
         if (musicSrv.isPlaying()) {
             musicSrv.pausePlayer();
-            ((ImageView)view).setImageResource(R.drawable.ic_playcircle);
+            findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_playcircle);
         }
         else {
             musicSrv.goCheckFocus();
-            ((ImageView)view).setImageResource(R.drawable.ic_pausecircle);
+            findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_pausecircle);
         }
     }
 
     @SuppressWarnings("UnusedParameters")
     public void nextSong(View view) {
         musicSrv.playNext();
-        playPauseButton.setImageResource(R.drawable.ic_pausecircle);
+        findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_pausecircle);
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -266,7 +296,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
         else {
             musicSrv.playPrev();
-            playPauseButton.setImageResource(R.drawable.ic_pausecircle);
+            findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_pausecircle);
         }
     }
 
@@ -291,12 +321,15 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         musicSrv.seek(seek.getProgress());
         seekInteracting = false;
     }
+}
 
-    double findEuclideanDist(int x1, int y1, int z1, int x2, int y2, int z2) {
-        double sum = 0.0;
-        sum += Math.pow(x1 - x2, 2.0);
-        sum += Math.pow(y1 - y2, 2.0);
-        sum += Math.pow(z1 - z2, 2.0);
-        return Math.sqrt(sum);
+class SeekUpdater extends Thread {
+    SeekUpdater() {
+
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Thread began");
     }
 }

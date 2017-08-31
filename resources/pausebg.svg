@@ -14,27 +14,27 @@
    viewBox="0 0 150 150"
    version="1.1"
    id="svg4491"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="pausebg.svg">
   <defs
      id="defs4485" />
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#282828"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="-98.052547"
-     inkscape:cy="200.13363"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="223.90229"
+     inkscape:cy="424.01181"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="1272"
-     inkscape:window-y="-8"
+     inkscape:window-height="1005"
+     inkscape:window-x="1280"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata4488">
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -53,25 +53,10 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-147)">
-    <circle
-       style="opacity:1;fill:#ff4081;fill-opacity:0.8779343;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+    <path
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+       d="M 265.51367 6.9980469 A 258.56584 258.56584 0 0 0 6.9472656 265.56445 A 258.56584 258.56584 0 0 0 265.51367 524.13086 A 258.56584 258.56584 0 0 0 524.08008 265.56445 A 258.56584 258.56584 0 0 0 265.51367 6.9980469 z M 165.35938 154.19141 L 234.95898 154.19141 L 234.95898 393.17578 L 165.35938 393.17578 L 165.35938 154.19141 z M 296.60938 154.19141 L 366.20898 154.19141 L 366.20898 393.17578 L 296.60938 393.17578 L 296.60938 154.19141 z "
        id="path5038"
-       cx="74.933777"
-       cy="221.94809"
-       r="72.97303" />
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4522"
-       width="19.642145"
-       height="67.446281"
-       x="46.668266"
-       y="190.51643" />
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4522-8"
-       width="19.642145"
-       height="67.446281"
-       x="83.709969"
-       y="190.51645" />
+       transform="matrix(0.28222224,0,0,0.28222224,0,147)" />
   </g>
 </svg>

@@ -46,7 +46,6 @@
         android:maxLines="2"
         android:minLines="2"
         android:text="@string/unknown_data"
-        android:textColor="#333333"
         android:textAlignment="center"
         android:textSize="14sp"
         app:layout_constraintRight_toRightOf="parent"

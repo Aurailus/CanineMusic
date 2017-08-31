@@ -13,4 +13,13 @@
     <!--Legacy Highlight Colors-->
     <color name="touchLight">#44FFFFFF</color>
     <color name="touchDark">#33000000</color>
+
+    <!--Theme Colors-->
+    <color name="background_color">#FF000000</color>
+    <color name="text_color">#FFFFFFFF</color>
+    <color name="progress_back_color">#FFEEEEEE</color>
+
+    <color name="player_button_color">#FFEEEEEE</color> <!-- light is 646464 -->
+
+    <color name="nav_unselected">#FFAAAAAA</color>
 </resources>

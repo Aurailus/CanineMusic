@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <!--<item name="android:background">@color/background_color</item>-->
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:colorBackground">@color/background_color</item>
+        <item name="android:textAppearance">@color/text_color</item>
+        <item name="android:text">@color/text_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:progressBackgroundTint">@color/progress_back_color</item>
+
+        <item name="android:colorControlHighlight">@color/touchLight</item>
+
+        <!--<item name="android:navigationBarColor">@color/colorPrimary</item>-->
+    </style>
+</resources>
