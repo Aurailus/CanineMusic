@@ -62,12 +62,12 @@ public class MusicService extends Service implements
                 prepared = true;
             }
         };
-        updateSeekbar = new Runnable(){
-            public void run(){
-                setSeekbar();
-                h.postDelayed(this, 1000);
-            }
-        };
+//        updateSeekbar = new Runnable(){
+//            public void run(){
+//                setSeekbar();
+//                h.postDelayed(this, 1000);
+//            }
+//        };
 
         notIntent = new Intent(this, MainActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -107,9 +107,10 @@ public class MusicService extends Service implements
     @Override
     public void onPrepared(MediaPlayer player) {
         int delay = 250;
-        h.removeCallbacks(updateSeekbar);
+//        h.removeCallbacks(updateSeekbar);
+        System.out.println("prepared");
         h.postDelayed(playerStart, delay);
-        h.postDelayed(updateSeekbar, 250);
+//        h.postDelayed(updateSeekbar, 250);
 
         Intent intent = new Intent("musicPrepared");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

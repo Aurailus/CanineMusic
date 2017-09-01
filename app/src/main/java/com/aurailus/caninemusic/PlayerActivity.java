@@ -130,6 +130,9 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     };
 
     private void initPlayer() {
+
+//        System.gc(); //IMPORTANT: This is a terrible thing to do, but I can't find a workaround. The objects created in updatePlayer() build up and up and I have no power to stop it without garbage collecting. If you can find a workaround, tell me!
+
         seek.setMax(Math.round(musicSrv.getLength()));
 
         int x = musicSrv.getLength() / 1000;
@@ -227,13 +230,14 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         if (musicBound) {
             if (!seekInteracting) {
                 seek.setProgress(Math.round(musicSrv.getTime()));
-
                 int x = musicSrv.getTime() / 1000;
                 int seconds = x % 60;
                 x /= 60;
                 int minutes = x % 60;
 
-                timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
+                String secstr = ((Integer)seconds).toString();
+                if (secstr.length() == 1) secstr = "0" + secstr;
+                timeView.setText(minutes + ":" + secstr);
             }
         }
     }
@@ -321,7 +325,12 @@ class SeekUpdater extends Thread {
     public void run() {
         System.out.println("Thread began");
         while (keepAlive) {
-            parent.updatePlayer();
+            parent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    parent.updatePlayer();
+                }
+            });
             try {
                 Thread.sleep(updateDelay);
             }

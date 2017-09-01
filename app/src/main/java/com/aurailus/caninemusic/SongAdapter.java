@@ -16,7 +16,7 @@ class SongAdapter extends BaseAdapter {
     private final ArrayList<Album> albumart;
     private final LayoutInflater songInf;
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView songView;
         TextView artistView;
         TextView songDuration;
