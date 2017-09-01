@@ -43,9 +43,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
     private MusicService musicSrv;
     private boolean musicBound = false;
     private Intent playIntent;
-    static private Handler h;
-    private Runnable r;
-    private int updateDelay;
+    private SeekUpdater updater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,23 +69,15 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("musicPrepared"));
         LocalBroadcastManager.getInstance(this).registerReceiver(pMessageReciever, new IntentFilter("playingState"));
 
-        h = new Handler();
-        r = new Runnable(){
-            public void run(){
-                updatePlayer();
-                h.postDelayed(this, updateDelay);
-            }
-        };
-
-        SeekUpdater seekThread = new SeekUpdater();
-        seekThread.start();
+        updater = new SeekUpdater(this);
+        updater.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        updater.kill();
         if (isFinishing()) {
-            h.removeCallbacks(r);
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
             stopService(playIntent);
             unbindService(musicConnection);
@@ -111,10 +101,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 findViewById(R.id.playpause_frame).setBackgroundResource(R.drawable.ic_playcircle);
             }
         }
-
-        updateDelay = 150;
-        h.postDelayed(r, updateDelay);
-        System.out.println("Updaterunnable called");
     }
 
     @Override
@@ -237,7 +223,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         }
     }
 
-    private void updatePlayer() {
+    void updatePlayer() {
         if (musicBound) {
             if (!seekInteracting) {
                 seek.setProgress(Math.round(musicSrv.getTime()));
@@ -250,7 +236,6 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
                 timeView.setText(minutes + ":" + String.format(Locale.CANADA, "%02d", seconds));
             }
         }
-        System.out.println("Update player ending");
     }
 
     public void openQueue(View view) {
@@ -324,12 +309,28 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
 }
 
 class SeekUpdater extends Thread {
-    SeekUpdater() {
+    private int updateDelay = 150;
+    private PlayerActivity parent;
+    private boolean keepAlive = true;
 
+    SeekUpdater(PlayerActivity parent) {
+        this.parent = parent;
     }
 
     @Override
     public void run() {
         System.out.println("Thread began");
+        while (keepAlive) {
+            parent.updatePlayer();
+            try {
+                Thread.sleep(updateDelay);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void kill() {
+        keepAlive = false;
     }
 }

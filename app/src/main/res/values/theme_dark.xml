@@ -8,6 +8,8 @@
         <item name="android:textAppearance">@color/text_color</item>
         <item name="android:text">@color/text_color</item>
         <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColorSecondary">@color/text_color</item>
+        <item name="android:textColorPrimary">@color/text_color</item>
         <item name="android:progressBackgroundTint">@color/progress_back_color</item>
 
         <item name="android:colorControlHighlight">@color/touchLight</item>
