@@ -35,6 +35,6 @@ public class QueueActivity extends AppCompatActivity {
     @SuppressWarnings("UnusedParameters")
     public void back(View view) {
         this.finish();
-        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        overridePendingTransition(R.anim.slide_fleft_small, R.anim.slide_tleft_large);
     }
 }

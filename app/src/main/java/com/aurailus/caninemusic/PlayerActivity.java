@@ -246,7 +246,7 @@ public class PlayerActivity extends AppCompatActivity implements SeekBar.OnSeekB
         Intent intent = new Intent(PlayerActivity.this, QueueActivity.class);
         intent.putExtra(STATE_QUEUE, musicSrv.getList());
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+        overridePendingTransition(R.anim.slide_fright_small, R.anim.slide_tright_large);
     }
 
     @Override
