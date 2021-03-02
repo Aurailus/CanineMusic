@@ -1,6 +1,6 @@
 # IMPORTANT
 ## This project is officially inactive. It is unlikely that I will be continuing it. As such, I am licensing my work under a [Creative Commons Attribution 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/) for anyone who would like to continue the development. Thank you.
-## - Benjamin Collings, 2018
+ - Auri Collings, 2018
 
 # Canine Music Player
 ![Canine Music Logo](https://github.com/Aurailus/CanineMusic/blob/master/resources/canine_logo_raster_small.png)
